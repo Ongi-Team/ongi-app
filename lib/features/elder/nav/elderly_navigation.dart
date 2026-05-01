@@ -51,7 +51,7 @@ class ElderlyNavigation extends StatelessWidget {
               return Expanded(
                 child: InkWell(
                   onTap: () => onTap(index),
-                  splashColor: _activeColor.withOpacity(0.1),
+                  splashColor: _activeColor,
                   highlightColor: Colors.transparent,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
