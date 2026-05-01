@@ -1,0 +1,25 @@
+---
+name: PR template
+about: Describe this issue template's purpose here.
+title: ''
+labels: ''
+assignees: sunnny619
+
+---
+
+## Issue
+
+- Resolves #
+
+## Description
+<!-- 어떤 기능을 구현했나요?    
+기존 기능에서 어떤 점이 달라졌나요?  
+자세한 로직이 필요하다면 함께 적어주세요!  
+코드에 대한 설명이라면, 코맨트를 통해서 어떤 부분이 어떤 코드인지 설명해주세요!   -->
+
+## Screenshot
+<!--기능을 실행했을 때 정상 동작하는지 여부를 확인하고 스샷을 올려주세요  -->
+
+## 💬 리뷰 요구사항(선택)
+<!--리뷰어가 특별히 봐주었으면 하는 부분이 있다면 작성해주세요  
+ 고민사항도 적어주세요.  -->
