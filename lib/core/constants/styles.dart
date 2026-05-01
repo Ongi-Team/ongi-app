@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ongi_app/constants/constants.dart';
+import 'package:ongi_app/core/constants/colors.dart';
 
 final class OngiTextStyle {
   static const TextStyle nav = TextStyle(
