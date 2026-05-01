@@ -1,12 +1,3 @@
----
-name: PR template
-about: Describe this issue template's purpose here.
-title: ''
-labels: ''
-assignees: sunnny619
-
----
-
 ## Issue
 
 - Resolves #
