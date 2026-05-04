@@ -4,6 +4,7 @@ abstract class AppRoutes {
   static const login = '/login';
   static const signup = '/signup';
   static const signupAccountInfo = '/signup/account-info';
+  static const signupElderlyInfo = '/signup/elderly-info';
 
   // 보호자
   static const guardianHome = '/guardian/home';

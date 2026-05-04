@@ -7,6 +7,10 @@ class SignupViewModel extends ChangeNotifier {
     idController.addListener(notifyListeners);
     passwordController.addListener(notifyListeners);
     confirmPasswordController.addListener(notifyListeners);
+    elderlyNameController.addListener(notifyListeners);
+    elderlyAgeController.addListener(notifyListeners);
+    elderlyRelationController.addListener(notifyListeners);
+    elderlyPhoneController.addListener(notifyListeners);
   }
 
   // Step 1: 전화번호 인증
@@ -20,17 +24,26 @@ class SignupViewModel extends ChangeNotifier {
   final TextEditingController confirmPasswordController =
       TextEditingController();
 
+  // Step 3: 어르신 정보
+  final TextEditingController elderlyNameController = TextEditingController();
+  final TextEditingController elderlyAgeController = TextEditingController();
+  final TextEditingController elderlyRelationController =
+      TextEditingController();
+  final TextEditingController elderlyPhoneController = TextEditingController();
+
   bool _isLoading = false;
   String? _errorMessage;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  // Step 1 유효성
   bool get canProceedFromPhone =>
       phoneController.text.isNotEmpty &&
       verificationCodeController.text.isNotEmpty;
 
-  bool get canSubmitAccountInfo =>
+  // Step 2 유효성
+  bool get canProceedFromAccountInfo =>
       idController.text.isNotEmpty &&
       passwordController.text.isNotEmpty &&
       confirmPasswordController.text.isNotEmpty &&
@@ -44,6 +57,13 @@ class SignupViewModel extends ChangeNotifier {
     return null;
   }
 
+  // Step 3 유효성
+  bool get canSubmitElderlyInfo =>
+      elderlyNameController.text.isNotEmpty &&
+      elderlyAgeController.text.isNotEmpty &&
+      elderlyRelationController.text.isNotEmpty &&
+      elderlyPhoneController.text.isNotEmpty;
+
   void clearError() {
     if (_errorMessage != null) {
       _errorMessage = null;
@@ -52,7 +72,7 @@ class SignupViewModel extends ChangeNotifier {
   }
 
   Future<void> submitSignup({required VoidCallback onSuccess}) async {
-    if (!canSubmitAccountInfo) return;
+    if (!canSubmitElderlyInfo) return;
 
     _isLoading = true;
     _errorMessage = null;
@@ -78,12 +98,20 @@ class SignupViewModel extends ChangeNotifier {
     idController.removeListener(notifyListeners);
     passwordController.removeListener(notifyListeners);
     confirmPasswordController.removeListener(notifyListeners);
+    elderlyNameController.removeListener(notifyListeners);
+    elderlyAgeController.removeListener(notifyListeners);
+    elderlyRelationController.removeListener(notifyListeners);
+    elderlyPhoneController.removeListener(notifyListeners);
 
     phoneController.dispose();
     verificationCodeController.dispose();
     idController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    elderlyNameController.dispose();
+    elderlyAgeController.dispose();
+    elderlyRelationController.dispose();
+    elderlyPhoneController.dispose();
     super.dispose();
   }
 }
