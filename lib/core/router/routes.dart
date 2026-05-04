@@ -2,6 +2,7 @@ abstract class AppRoutes {
   AppRoutes._();
 
   static const login = '/login';
+  static const signup = '/signup';
 
   // 보호자
   static const guardianHome = '/guardian/home';

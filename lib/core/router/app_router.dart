@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ongi_app/features/auth/login_screen.dart';
+import 'package:ongi_app/features/auth/signup/phone_number_screen.dart';
 import 'package:ongi_app/features/elder/elder_shell.dart';
 import 'package:ongi_app/features/guardian/guardian_shell.dart';
 import 'routes.dart';
@@ -11,6 +12,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.login,
       builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.signup,
+      builder: (context, state) => const PhoneNumberScreen(),
     ),
 
     // 보호자 Shell (홈 / 일정 / 설정)
