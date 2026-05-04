@@ -19,18 +19,18 @@ class GuardianNavigation extends StatelessWidget {
 
   static const List<_NavItem> _items = [
     _NavItem(
-      iconOn: 'assets/icon/nav/hone_on.svg',
-      iconOff: 'assets/icon/nav/home_off.svg',
+      iconOn: 'assets/icons/nav/hone_on.svg',
+      iconOff: 'assets/icons/nav/home_off.svg',
       label: '홈',
     ),
     _NavItem(
-      iconOn: 'assets/icon/nav/schedule_on.svg',
-      iconOff: 'assets/icon/nav/schedule_off.svg',
+      iconOn: 'assets/icons/nav/schedule_on.svg',
+      iconOff: 'assets/icons/nav/schedule_off.svg',
       label: '일정',
     ),
     _NavItem(
-      iconOn: 'assets/icon/nav/setting_on.svg',
-      iconOff: 'assets/icon/nav/setting_off.svg',
+      iconOn: 'assets/icons/nav/setting_on.svg',
+      iconOff: 'assets/icons/nav/setting_off.svg',
       label: '설정',
     ),
   ];
@@ -56,7 +56,7 @@ class GuardianNavigation extends StatelessWidget {
               return Expanded(
                 child: InkWell(
                   onTap: () => onTap(index),
-                  splashColor: _activeColor.withOpacity(0.1),
+                  splashColor: _activeColor,
                   highlightColor: Colors.transparent,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
