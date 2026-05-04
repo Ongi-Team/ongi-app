@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:ongi_app/features/auth/login_screen.dart';
+import 'package:ongi_app/features/auth/signup/account_info_screen.dart';
 import 'package:ongi_app/features/auth/signup/phone_number_screen.dart';
+import 'package:ongi_app/features/auth/signup/signup_view_model.dart';
 import 'package:ongi_app/features/elder/elder_shell.dart';
 import 'package:ongi_app/features/guardian/guardian_shell.dart';
 import 'routes.dart';
@@ -13,9 +16,23 @@ final appRouter = GoRouter(
       path: AppRoutes.login,
       builder: (context, state) => const LoginScreen(),
     ),
-    GoRoute(
-      path: AppRoutes.signup,
-      builder: (context, state) => const PhoneNumberScreen(),
+
+    // 회원가입 플로우 - SignupViewModel을 두 화면이 공유
+    ShellRoute(
+      builder: (context, state, child) => ChangeNotifierProvider(
+        create: (_) => SignupViewModel(),
+        child: child,
+      ),
+      routes: [
+        GoRoute(
+          path: AppRoutes.signup,
+          builder: (context, state) => const PhoneNumberScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.signupAccountInfo,
+          builder: (context, state) => const AccountInfoScreen(),
+        ),
+      ],
     ),
 
     // 보호자 Shell (홈 / 일정 / 설정)
