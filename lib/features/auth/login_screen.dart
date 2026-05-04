@@ -111,7 +111,9 @@ class _LoginView extends StatelessWidget {
                             strokeWidth: 2,
                           ),
                         )
-                      : const Text('로그인', style: OngiTextStyle.button18),
+                      : Text('로그인',
+                          style: OngiTextStyle.button18
+                              .copyWith(color: OngiColor.white50)),
                 ),
               ),
               const SizedBox(height: 12),
