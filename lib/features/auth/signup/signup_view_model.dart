@@ -69,7 +69,7 @@ class SignupViewModel extends ChangeNotifier {
   String? get idCheckMessage => _idCheckMessage;
 
   Future<void> sendVerificationCode() async {
-    final phone = phoneController.text.trim();
+    final phone = phoneController.text.replaceAll('-', '');
     if (!canSendCode) return;
 
     _isSendingCode = true;
@@ -92,7 +92,7 @@ class SignupViewModel extends ChangeNotifier {
   }
 
   Future<void> verifyPhone() async {
-    final phone = phoneController.text.trim();
+    final phone = phoneController.text.replaceAll('-', '');
     final code = verificationCodeController.text.trim();
     if (phone.isEmpty || code.isEmpty) return;
 
@@ -172,8 +172,7 @@ class SignupViewModel extends ChangeNotifier {
   bool get canSubmitElderlyInfo =>
       elderlyNameController.text.isNotEmpty &&
       elderlyAgeController.text.isNotEmpty &&
-      elderlyRelationController.text.isNotEmpty &&
-      elderlyPhoneController.text.isNotEmpty;
+      elderlyRelationController.text.isNotEmpty;
 
   void clearError() {
     if (_errorMessage != null) {
@@ -195,7 +194,7 @@ class SignupViewModel extends ChangeNotifier {
           loginId: idController.text.trim(),
           password: passwordController.text,
           name: nameController.text.trim(),
-          phone: phoneController.text.trim(),
+          phone: phoneController.text.replaceAll('-', ''),
           elder: ElderDto(
             name: elderlyNameController.text.trim(),
             age: int.parse(elderlyAgeController.text.trim()),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ongi_app/core/constants/constants.dart';
 
 class BasicTextField extends StatefulWidget {
@@ -10,6 +11,7 @@ class BasicTextField extends StatefulWidget {
     this.obscureText = false,
     this.keyboardType,
     this.onChanged,
+    this.inputFormatters,
   });
 
   final String label;
@@ -18,6 +20,7 @@ class BasicTextField extends StatefulWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<BasicTextField> createState() => _BasicTextFieldState();
@@ -47,6 +50,7 @@ class _BasicTextFieldState extends State<BasicTextField> {
           obscureText: _isObscured,
           keyboardType: widget.keyboardType,
           onChanged: widget.onChanged,
+          inputFormatters: widget.inputFormatters,
           style: const TextStyle(
             fontSize: 16,
             color: Colors.black87,

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:ongi_app/core/router/routes.dart';
 import 'package:ongi_app/shared/widgets/basic_app_bar.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
+import 'package:ongi_app/shared/utils/phone_number_input_formatter.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
 import 'package:ongi_app/shared/widgets/check_action_button.dart';
 import 'signup_view_model.dart';
@@ -50,6 +51,7 @@ class PhoneNumberScreen extends StatelessWidget {
                               hintText: '전화번호를 입력해주세요.',
                               controller: vm.phoneController,
                               keyboardType: TextInputType.phone,
+                              inputFormatters: [PhoneNumberInputFormatter()],
                             ),
                           ),
                           const SizedBox(width: 8),

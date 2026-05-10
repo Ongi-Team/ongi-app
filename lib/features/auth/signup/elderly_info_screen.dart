@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:ongi_app/core/constants/constants.dart';
+import 'package:ongi_app/core/router/routes.dart';
 import 'package:ongi_app/shared/widgets/basic_app_bar.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
@@ -67,9 +68,7 @@ class ElderlyInfoScreen extends StatelessWidget {
                 child: BasicButton(
                   text: vm.isLoading ? '가입 중...' : '다음',
                   onPressed: () => vm.submitSignup(
-                    onSuccess: () {
-                      // TODO: 회원가입 완료 후 이동할 화면으로 변경
-                    },
+                    onSuccess: () => context.go(AppRoutes.signupComplete),
                   ),
                   isClickable: vm.canSubmitElderlyInfo && !vm.isLoading,
                 ),
