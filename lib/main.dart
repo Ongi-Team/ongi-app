@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/constants/constants.dart';
 import 'core/di/service_locator.dart';
 import 'core/router/app_router.dart';
+import 'core/utils/foreground_notification.dart';
 import 'core/utils/notification_permission.dart';
 import 'firebase_options.dart';
 
@@ -13,6 +14,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupServiceLocator();
   await requestNotificationPermission();
+  await initForegroundNotification();
   runApp(const MyApp());
 }
 
