@@ -21,11 +21,11 @@ class BasicButton extends StatelessWidget {
       width: _largeWidth,
       height: 50,
       child: ElevatedButton(
-        onPressed: isClickable ? onPressed : null,
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              isClickable ? OngiColor.primary : OngiColor.systemGray02,
-          foregroundColor: isClickable ? OngiColor.white50 : OngiColor.primary,
+              isClickable ? OngiColor.primary : OngiColor.systemGray03,
+          foregroundColor: isClickable ? OngiColor.white50 : OngiColor.white50,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
