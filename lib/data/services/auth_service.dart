@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:ongi_app/core/constants/apis.dart';
+import 'package:ongi_app/data/dto/request/signup_request_dto.dart';
 import 'package:ongi_app/data/network/api_exception.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 
@@ -26,6 +27,21 @@ class AuthService {
     await _secureStorage.saveAccessToken(newAccessToken);
     if (newRefreshToken != null) {
       await _secureStorage.saveRefreshToken(newRefreshToken);
+    }
+  }
+
+  Future<void> signup(SignupRequestDto dto) async {
+    try {
+      await _dio.post(
+        Apis.postSignup,
+        data: dto.toJson(),
+        options: Options(extra: {'skipAuthToken': true}),
+      );
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '회원가입에 실패했습니다.',
+        e.response?.statusCode,
+      );
     }
   }
 

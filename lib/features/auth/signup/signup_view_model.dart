@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:ongi_app/data/dto/request/signup_request_dto.dart';
 import 'package:ongi_app/data/network/api_exception.dart';
 import 'package:ongi_app/data/services/auth_service.dart';
 
@@ -9,6 +10,7 @@ class SignupViewModel extends ChangeNotifier {
   SignupViewModel() {
     phoneController.addListener(notifyListeners);
     verificationCodeController.addListener(notifyListeners);
+    nameController.addListener(notifyListeners);
     idController.addListener(_onIdChanged);
     passwordController.addListener(notifyListeners);
     confirmPasswordController.addListener(notifyListeners);
@@ -24,6 +26,7 @@ class SignupViewModel extends ChangeNotifier {
       TextEditingController();
 
   // Step 2: 계정 정보
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController idController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
@@ -150,6 +153,7 @@ class SignupViewModel extends ChangeNotifier {
 
   // Step 2 유효성 — 아이디 중복 확인 통과 필요
   bool get canProceedFromAccountInfo =>
+      nameController.text.isNotEmpty &&
       idController.text.isNotEmpty &&
       _isIdAvailable == true &&
       passwordController.text.isNotEmpty &&
@@ -186,10 +190,25 @@ class SignupViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: 회원가입 API 호출
-      await Future.delayed(const Duration(seconds: 1));
+      await _authService.signup(
+        SignupRequestDto(
+          loginId: idController.text.trim(),
+          password: passwordController.text,
+          name: nameController.text.trim(),
+          phone: phoneController.text.trim(),
+          elder: ElderDto(
+            name: elderlyNameController.text.trim(),
+            age: int.parse(elderlyAgeController.text.trim()),
+            phone: elderlyPhoneController.text.trim(),
+            relationship: elderlyRelationController.text.trim(),
+          ),
+        ),
+      );
       onSuccess();
-    } catch (e) {
+    } on ApiException catch (e) {
+      _errorMessage = e.message;
+      notifyListeners();
+    } catch (_) {
       _errorMessage = '회원가입에 실패했습니다. 다시 시도해주세요.';
       notifyListeners();
     } finally {
@@ -202,6 +221,7 @@ class SignupViewModel extends ChangeNotifier {
   void dispose() {
     phoneController.removeListener(notifyListeners);
     verificationCodeController.removeListener(notifyListeners);
+    nameController.removeListener(notifyListeners);
     idController.removeListener(_onIdChanged);
     passwordController.removeListener(notifyListeners);
     confirmPasswordController.removeListener(notifyListeners);
@@ -212,6 +232,7 @@ class SignupViewModel extends ChangeNotifier {
 
     phoneController.dispose();
     verificationCodeController.dispose();
+    nameController.dispose();
     idController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();

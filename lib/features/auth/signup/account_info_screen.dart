@@ -41,6 +41,13 @@ class AccountInfoScreen extends StatelessWidget {
                         onBackButtonPressed: () => context.pop(),
                       ),
                       const SizedBox(height: 40),
+                      BasicTextField(
+                        label: '보호자 성함',
+                        hintText: '성함을 작성해주세요.',
+                        controller: vm.nameController,
+                        keyboardType: TextInputType.name,
+                      ),
+                      const SizedBox(height: 24),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
