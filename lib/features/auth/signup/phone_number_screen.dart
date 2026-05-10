@@ -6,6 +6,7 @@ import 'package:ongi_app/core/router/routes.dart';
 import 'package:ongi_app/shared/widgets/basic_app_bar.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
+import 'package:ongi_app/shared/widgets/check_action_button.dart';
 import 'signup_view_model.dart';
 
 class PhoneNumberScreen extends StatelessWidget {
@@ -49,39 +50,11 @@ class PhoneNumberScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    SizedBox(
-                      height: 56,
-                      child: OutlinedButton(
-                        onPressed: vm.canSendCode && !vm.isSendingCode
-                            ? vm.sendVerificationCode
-                            : null,
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                              color: OngiColor.primary, width: 1.5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          disabledForegroundColor: OngiColor.systemGray03,
-                        ),
-                        child: vm.isSendingCode
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: OngiColor.primary,
-                                ),
-                              )
-                            : Text(
-                                vm.isCodeSent ? '재발송' : '인증번호 발송',
-                                style: OngiTextStyle.body15.copyWith(
-                                  color: vm.canSendCode
-                                      ? OngiColor.primary
-                                      : OngiColor.systemGray03,
-                                ),
-                              ),
-                      ),
+                    CheckActionButton(
+                      text: vm.isCodeSent ? '재발송' : '인증번호 발송',
+                      onPressed:
+                          vm.canSendCode ? vm.sendVerificationCode : null,
+                      isLoading: vm.isSendingCode,
                     ),
                   ],
                 ),
@@ -101,47 +74,15 @@ class PhoneNumberScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        SizedBox(
-                          height: 56,
-                          child: OutlinedButton(
-                            onPressed: vm.verificationCodeController.text
-                                        .trim()
-                                        .isEmpty ||
-                                    vm.isVerifyingPhone ||
-                                    vm.isPhoneVerified
-                                ? null
-                                : vm.verifyPhone,
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                  color: OngiColor.primary, width: 1.5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 14),
-                              disabledForegroundColor: OngiColor.systemGray03,
-                            ),
-                            child: vm.isVerifyingPhone
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: OngiColor.primary,
-                                    ),
-                                  )
-                                : Text(
-                                    '인증 확인',
-                                    style: OngiTextStyle.body15.copyWith(
-                                      color: vm.verificationCodeController.text
-                                                  .trim()
-                                                  .isEmpty ||
-                                              vm.isPhoneVerified
-                                          ? OngiColor.systemGray03
-                                          : OngiColor.primary,
-                                    ),
-                                  ),
-                          ),
+                        CheckActionButton(
+                          text: '인증 확인',
+                          onPressed: vm.verificationCodeController.text
+                                      .trim()
+                                      .isEmpty ||
+                                  vm.isPhoneVerified
+                              ? null
+                              : vm.verifyPhone,
+                          isLoading: vm.isVerifyingPhone,
                         ),
                       ],
                     ),

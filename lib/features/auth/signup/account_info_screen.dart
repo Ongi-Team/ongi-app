@@ -6,6 +6,7 @@ import 'package:ongi_app/core/constants/constants.dart';
 import 'package:ongi_app/shared/widgets/basic_app_bar.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
+import 'package:ongi_app/shared/widgets/check_action_button.dart';
 import 'signup_view_model.dart';
 
 class AccountInfoScreen extends StatelessWidget {
@@ -52,42 +53,12 @@ class AccountInfoScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        SizedBox(
-                          height: 56,
-                          child: OutlinedButton(
-                            onPressed: vm.idController.text.trim().isEmpty ||
-                                    vm.isCheckingId
-                                ? null
-                                : vm.checkId,
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                  color: OngiColor.primary, width: 1.5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 14),
-                              disabledForegroundColor: OngiColor.systemGray03,
-                              disabledMouseCursor: SystemMouseCursors.basic,
-                            ),
-                            child: vm.isCheckingId
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: OngiColor.primary,
-                                    ),
-                                  )
-                                : Text(
-                                    '중복 확인',
-                                    style: OngiTextStyle.body15.copyWith(
-                                      color: vm.idController.text.trim().isEmpty
-                                          ? OngiColor.systemGray03
-                                          : OngiColor.primary,
-                                    ),
-                                  ),
-                          ),
+                        CheckActionButton(
+                          text: '중복 확인',
+                          onPressed: vm.idController.text.trim().isEmpty
+                              ? null
+                              : vm.checkId,
+                          isLoading: vm.isCheckingId,
                         ),
                       ],
                     ),
