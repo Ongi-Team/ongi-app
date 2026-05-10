@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:ongi_app/features/auth/login_screen.dart';
 import 'package:ongi_app/features/auth/signup/account_info_screen.dart';
 import 'package:ongi_app/features/auth/signup/elderly_info_screen.dart';
+import 'package:ongi_app/features/auth/signup/signup_complete_screen.dart';
 import 'package:ongi_app/features/auth/signup/phone_number_screen.dart';
 import 'package:ongi_app/features/auth/signup/signup_view_model.dart';
 import 'package:ongi_app/features/elder/elder_shell.dart';
@@ -36,6 +37,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.signupElderlyInfo,
           builder: (context, state) => const ElderlyInfoScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.signupComplete,
+          builder: (context, state) => const SignupCompleteScreen(),
         ),
       ],
     ),

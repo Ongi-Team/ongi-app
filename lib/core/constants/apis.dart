@@ -7,11 +7,11 @@ abstract class Apis {
   /// baseUrl 끝에 /가 있어서, 여기서는 맨 앞에 /을 빼고 기입한다.
 
   /// 토큰 관련 api
-  static const String postSignup = "auth/signup";
+  static const String postSignup = "api/auth/signup";
   static const String reissueToken = "auth/reissue";
 
   /// 로그인 관련 api
-  static const String getCheckId = "auth/check-id";
-  static const String postPhoneVerify = "auth/phone/verify";
-  static const String sendPhoneNumber = "auth/phone/send";
+  static const String getCheckId = "api/auth/check-id";
+  static const String postPhoneVerify = "api/auth/phone/verify";
+  static const String sendPhoneNumber = "api/auth/phone/send";
 }
