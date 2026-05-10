@@ -46,6 +46,14 @@ class SecureStorageRepository {
     return value != null ? int.tryParse(value) : null;
   }
 
+  Future<String?> readFcmToken() async {
+    return await _storage.read(key: 'fcm_token');
+  }
+
+  Future<void> saveFcmToken(String token) async {
+    await _storage.write(key: 'fcm_token', value: token);
+  }
+
   ///모든 데이터 삭제
   Future<void> deleteAllData() async {
     await _storage.deleteAll();
