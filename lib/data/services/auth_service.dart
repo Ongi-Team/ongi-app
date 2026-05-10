@@ -29,6 +29,36 @@ class AuthService {
     }
   }
 
+  Future<void> sendVerificationCode(String phone) async {
+    try {
+      await _dio.post(
+        Apis.sendPhoneNumber,
+        data: {'phone': phone},
+        options: Options(extra: {'skipAuthToken': true}),
+      );
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '인증번호 발송에 실패했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
+
+  Future<void> verifyPhone(String phone, String code) async {
+    try {
+      await _dio.post(
+        Apis.postPhoneVerify,
+        data: {'phone': phone, 'code': code},
+        options: Options(extra: {'skipAuthToken': true}),
+      );
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '인증번호 확인에 실패했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
+
   Future<bool> checkId(String loginId) async {
     try {
       final response = await _dio.get(

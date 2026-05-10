@@ -81,7 +81,7 @@ class AccountInfoScreen extends StatelessWidget {
                                   )
                                 : Text(
                                     '중복 확인',
-                                    style: OngiTextStyle.caption12.copyWith(
+                                    style: OngiTextStyle.body15.copyWith(
                                       color: vm.idController.text.trim().isEmpty
                                           ? OngiColor.systemGray03
                                           : OngiColor.primary,

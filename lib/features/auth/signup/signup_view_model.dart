@@ -3,6 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:ongi_app/data/network/api_exception.dart';
 import 'package:ongi_app/data/services/auth_service.dart';
 
+AuthService get _authService => GetIt.instance<AuthService>();
+
 class SignupViewModel extends ChangeNotifier {
   SignupViewModel() {
     phoneController.addListener(notifyListeners);
@@ -37,6 +39,21 @@ class SignupViewModel extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
+  // 전화번호 인증 상태
+  bool _isCodeSent = false;
+  bool _isSendingCode = false;
+  bool _isPhoneVerified = false;
+  bool _isVerifyingPhone = false;
+  String? _phoneVerifyMessage;
+
+  bool get isCodeSent => _isCodeSent;
+  bool get isSendingCode => _isSendingCode;
+  bool get isPhoneVerified => _isPhoneVerified;
+  bool get isVerifyingPhone => _isVerifyingPhone;
+  String? get phoneVerifyMessage => _phoneVerifyMessage;
+
+  bool get canSendCode => phoneController.text.replaceAll('-', '').length == 11;
+
   // 아이디 중복 확인 상태
   bool? _isIdAvailable;
   bool _isCheckingId = false;
@@ -47,6 +64,53 @@ class SignupViewModel extends ChangeNotifier {
   bool? get isIdAvailable => _isIdAvailable;
   bool get isCheckingId => _isCheckingId;
   String? get idCheckMessage => _idCheckMessage;
+
+  Future<void> sendVerificationCode() async {
+    final phone = phoneController.text.trim();
+    if (!canSendCode) return;
+
+    _isSendingCode = true;
+    _isCodeSent = false;
+    _phoneVerifyMessage = null;
+    _isPhoneVerified = false;
+    notifyListeners();
+
+    try {
+      await _authService.sendVerificationCode(phone);
+      _isCodeSent = true;
+    } on ApiException catch (e) {
+      _phoneVerifyMessage = e.message;
+    } catch (_) {
+      _phoneVerifyMessage = '인증번호 발송에 실패했습니다. 다시 시도해주세요.';
+    } finally {
+      _isSendingCode = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> verifyPhone() async {
+    final phone = phoneController.text.trim();
+    final code = verificationCodeController.text.trim();
+    if (phone.isEmpty || code.isEmpty) return;
+
+    _isVerifyingPhone = true;
+    _phoneVerifyMessage = null;
+    _isPhoneVerified = false;
+    notifyListeners();
+
+    try {
+      await _authService.verifyPhone(phone, code);
+      _isPhoneVerified = true;
+      _phoneVerifyMessage = '인증이 완료되었습니다.';
+    } on ApiException catch (e) {
+      _phoneVerifyMessage = e.message;
+    } catch (_) {
+      _phoneVerifyMessage = '인증 확인에 실패했습니다. 다시 시도해주세요.';
+    } finally {
+      _isVerifyingPhone = false;
+      notifyListeners();
+    }
+  }
 
   void _onIdChanged() {
     if (_isIdAvailable != null || _idCheckMessage != null) {
@@ -82,9 +146,7 @@ class SignupViewModel extends ChangeNotifier {
   }
 
   // Step 1 유효성
-  bool get canProceedFromPhone =>
-      phoneController.text.isNotEmpty &&
-      verificationCodeController.text.isNotEmpty;
+  bool get canProceedFromPhone => _isPhoneVerified;
 
   // Step 2 유효성 — 아이디 중복 확인 통과 필요
   bool get canProceedFromAccountInfo =>
