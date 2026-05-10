@@ -27,95 +27,102 @@ class AccountInfoScreen extends StatelessWidget {
           }
         },
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                BasicAppBar(
-                  title: '회원가입',
-                  subtitle: '사용하실 아이디와 비밀번호를 입력해주세요',
-                  onBackButtonPressed: () => context.pop(),
-                ),
-                const SizedBox(height: 40),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: BasicTextField(
-                            label: '아이디',
-                            hintText: '사용하실 아이디를 입력해주세요',
-                            controller: vm.idController,
-                            keyboardType: TextInputType.text,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BasicAppBar(
+                        title: '회원가입',
+                        subtitle: '사용하실 아이디와 비밀번호를 입력해주세요',
+                        onBackButtonPressed: () => context.pop(),
+                      ),
+                      const SizedBox(height: 40),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: BasicTextField(
+                                  label: '아이디',
+                                  hintText: '사용하실 아이디를 입력해주세요',
+                                  controller: vm.idController,
+                                  keyboardType: TextInputType.text,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              CheckActionButton(
+                                text: '중복 확인',
+                                onPressed: vm.idController.text.trim().isEmpty
+                                    ? null
+                                    : vm.checkId,
+                                isLoading: vm.isCheckingId,
+                              ),
+                            ],
+                          ),
+                          if (vm.idCheckMessage != null) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              vm.idCheckMessage!,
+                              style: OngiTextStyle.caption12.copyWith(
+                                color: vm.isIdAvailable == true
+                                    ? OngiColor.success
+                                    : OngiColor.fail,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      BasicTextField(
+                        label: '비밀번호',
+                        hintText: '비밀번호를 입력해주세요.',
+                        controller: vm.passwordController,
+                        obscureText: true,
+                      ),
+                      const SizedBox(height: 24),
+                      BasicTextField(
+                        label: '비밀번호 확인',
+                        hintText: '비밀번호 확인을 위해 다시 입력해주세요.',
+                        controller: vm.confirmPasswordController,
+                        obscureText: true,
+                      ),
+                      if (vm.passwordMatchError != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          vm.passwordMatchError!,
+                          style: OngiTextStyle.body15.copyWith(
+                            color: OngiColor.fail,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        CheckActionButton(
-                          text: '중복 확인',
-                          onPressed: vm.idController.text.trim().isEmpty
-                              ? null
-                              : vm.checkId,
-                          isLoading: vm.isCheckingId,
+                      ],
+                      if (vm.errorMessage != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          vm.errorMessage!,
+                          style: OngiTextStyle.body15.copyWith(
+                            color: OngiColor.fail,
+                          ),
                         ),
                       ],
-                    ),
-                    if (vm.idCheckMessage != null) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        vm.idCheckMessage!,
-                        style: OngiTextStyle.caption12.copyWith(
-                          color: vm.isIdAvailable == true
-                              ? OngiColor.success
-                              : OngiColor.fail,
-                        ),
-                      ),
                     ],
-                  ],
-                ),
-                const SizedBox(height: 24),
-                BasicTextField(
-                  label: '비밀번호',
-                  hintText: '비밀번호를 입력해주세요.',
-                  controller: vm.passwordController,
-                  obscureText: true,
-                ),
-                const SizedBox(height: 24),
-                BasicTextField(
-                  label: '비밀번호 확인',
-                  hintText: '비밀번호 확인을 위해 다시 입력해주세요.',
-                  controller: vm.confirmPasswordController,
-                  obscureText: true,
-                ),
-                if (vm.passwordMatchError != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    vm.passwordMatchError!,
-                    style: OngiTextStyle.body15.copyWith(
-                      color: OngiColor.fail,
-                    ),
                   ),
-                ],
-                if (vm.errorMessage != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    vm.errorMessage!,
-                    style: OngiTextStyle.body15.copyWith(
-                      color: OngiColor.fail,
-                    ),
-                  ),
-                ],
-                const Spacer(),
-                BasicButton(
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                child: BasicButton(
                   text: '다음',
                   onPressed: () => context.push(AppRoutes.signupElderlyInfo),
                   isClickable: vm.canProceedFromAccountInfo,
                 ),
-                const SizedBox(height: 32),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

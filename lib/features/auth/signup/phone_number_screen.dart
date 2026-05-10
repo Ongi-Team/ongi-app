@@ -27,87 +27,94 @@ class PhoneNumberScreen extends StatelessWidget {
           }
         },
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                BasicAppBar(
-                  title: '회원가입',
-                  subtitle: '본인 인증을 위한 전화번호를 입력해주세요',
-                  onBackButtonPressed: () => context.pop(),
-                ),
-                const SizedBox(height: 40),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: BasicTextField(
-                        label: '전화번호',
-                        hintText: '전화번호를 입력해주세요.',
-                        controller: vm.phoneController,
-                        keyboardType: TextInputType.phone,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BasicAppBar(
+                        title: '회원가입',
+                        subtitle: '본인 인증을 위한 전화번호를 입력해주세요',
+                        onBackButtonPressed: () => context.pop(),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    CheckActionButton(
-                      text: vm.isCodeSent ? '재발송' : '인증번호 발송',
-                      onPressed:
-                          vm.canSendCode ? vm.sendVerificationCode : null,
-                      isLoading: vm.isSendingCode,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: BasicTextField(
-                            label: '인증번호',
-                            hintText: '인증번호를 입력해주세요.',
-                            controller: vm.verificationCodeController,
-                            keyboardType: TextInputType.number,
+                      const SizedBox(height: 40),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: BasicTextField(
+                              label: '전화번호',
+                              hintText: '전화번호를 입력해주세요.',
+                              controller: vm.phoneController,
+                              keyboardType: TextInputType.phone,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        CheckActionButton(
-                          text: '인증 확인',
-                          onPressed: vm.verificationCodeController.text
-                                      .trim()
-                                      .isEmpty ||
-                                  vm.isPhoneVerified
-                              ? null
-                              : vm.verifyPhone,
-                          isLoading: vm.isVerifyingPhone,
-                        ),
-                      ],
-                    ),
-                    if (vm.phoneVerifyMessage != null) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        vm.phoneVerifyMessage!,
-                        style: OngiTextStyle.caption12.copyWith(
-                          color: vm.isPhoneVerified
-                              ? OngiColor.success
-                              : OngiColor.fail,
-                        ),
+                          const SizedBox(width: 8),
+                          CheckActionButton(
+                            text: vm.isCodeSent ? '재발송' : '인증번호 발송',
+                            onPressed:
+                                vm.canSendCode ? vm.sendVerificationCode : null,
+                            isLoading: vm.isSendingCode,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: BasicTextField(
+                                  label: '인증번호',
+                                  hintText: '인증번호를 입력해주세요.',
+                                  controller: vm.verificationCodeController,
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              CheckActionButton(
+                                text: '인증 확인',
+                                onPressed: vm.verificationCodeController.text
+                                            .trim()
+                                            .isEmpty ||
+                                        vm.isPhoneVerified
+                                    ? null
+                                    : vm.verifyPhone,
+                                isLoading: vm.isVerifyingPhone,
+                              ),
+                            ],
+                          ),
+                          if (vm.phoneVerifyMessage != null) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              vm.phoneVerifyMessage!,
+                              style: OngiTextStyle.caption12.copyWith(
+                                color: vm.isPhoneVerified
+                                    ? OngiColor.success
+                                    : OngiColor.fail,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
-                  ],
+                  ),
                 ),
-                const Spacer(),
-                BasicButton(
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                child: BasicButton(
                   text: '다음',
                   onPressed: () => context.push(AppRoutes.signupAccountInfo),
                   isClickable: vm.canProceedFromPhone,
                 ),
-                const SizedBox(height: 32),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
