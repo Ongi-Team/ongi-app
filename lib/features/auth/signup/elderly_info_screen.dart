@@ -67,10 +67,13 @@ class ElderlyInfoScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                 child: BasicButton(
                   text: vm.isLoading ? '가입 중...' : '다음',
-                  onPressed: () => vm.submitSignup(
-                    onSuccess: () => context.go(AppRoutes.signupComplete),
-                  ),
                   isClickable: vm.canSubmitElderlyInfo && !vm.isLoading,
+                  onPressed: vm.canSubmitElderlyInfo && !vm.isLoading
+                      ? () => vm.submitSignup(
+                            onSuccess: () =>
+                                context.go(AppRoutes.signupComplete),
+                          )
+                      : null,
                 ),
               ),
             ],

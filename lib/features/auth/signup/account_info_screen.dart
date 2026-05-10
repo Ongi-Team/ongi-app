@@ -125,8 +125,10 @@ class AccountInfoScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                 child: BasicButton(
                   text: '다음',
-                  onPressed: () => context.push(AppRoutes.signupElderlyInfo),
                   isClickable: vm.canProceedFromAccountInfo,
+                  onPressed: vm.canProceedFromAccountInfo
+                      ? () => context.push(AppRoutes.signupElderlyInfo)
+                      : null,
                 ),
               ),
             ],

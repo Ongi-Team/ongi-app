@@ -2,6 +2,7 @@ abstract class AppRoutes {
   AppRoutes._();
 
   static const login = '/login';
+  static const roleSelect = '/role-select';
   static const signup = '/signup';
   static const signupAccountInfo = '/signup/account-info';
   static const signupElderlyInfo = '/signup/elderly-info';

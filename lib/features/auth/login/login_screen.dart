@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ongi_app/core/constants/constants.dart';
 import 'package:ongi_app/core/router/routes.dart';
+import 'package:ongi_app/shared/widgets/basic_button.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
 import 'login_view_model.dart';
 
@@ -43,14 +44,11 @@ class _LoginView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Spacer(flex: 2),
-
                 SvgPicture.asset(
                   'assets/logo.svg',
                   height: 72,
                 ),
-
                 const Spacer(flex: 2),
-
                 BasicTextField(
                   label: '아이디',
                   hintText: '아이디를 입력해주세요.',
@@ -59,7 +57,6 @@ class _LoginView extends StatelessWidget {
                   onChanged: (_) => context.read<LoginViewModel>().clearError(),
                 ),
                 const SizedBox(height: 16),
-
                 BasicTextField(
                   label: '비밀번호',
                   hintText: '비밀번호를 입력해주세요.',
@@ -67,7 +64,6 @@ class _LoginView extends StatelessWidget {
                   obscureText: true,
                   onChanged: (_) => context.read<LoginViewModel>().clearError(),
                 ),
-
                 if (vm.errorMessage != null) ...[
                   const SizedBox(height: 8),
                   Align(
@@ -80,48 +76,20 @@ class _LoginView extends StatelessWidget {
                     ),
                   ),
                 ],
-
                 const Spacer(flex: 2),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton(
-                    onPressed: vm.isLoading
-                        ? null
-                        : () => vm.login(
-                              onSuccess: () {
-                                if (!context.mounted) return;
-                                context.go(AppRoutes.guardianHome);
-                              },
-                            ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: OngiColor.primary,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: OngiColor.primary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                    ),
-                    child: vm.isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            '로그인',
-                            style: OngiTextStyle.button18
-                                .copyWith(color: OngiColor.white50),
+                BasicButton(
+                  text: vm.isLoading ? '로그인 중...' : '로그인',
+                  isClickable: !vm.isLoading,
+                  onPressed: vm.isLoading
+                      ? null
+                      : () => vm.login(
+                            onSuccess: () {
+                              if (!context.mounted) return;
+                              context.go(AppRoutes.roleSelect);
+                            },
                           ),
-                  ),
                 ),
                 const SizedBox(height: 12),
-
                 SizedBox(
                   width: double.infinity,
                   height: 54,
@@ -144,7 +112,6 @@ class _LoginView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -181,7 +148,6 @@ class _LoginView extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const Spacer(flex: 1),
               ],
             ),
