@@ -24,6 +24,7 @@ class AuthService {
 
       await _secureStorage.saveAccessToken(result.accessToken);
       await _secureStorage.saveRefreshToken(result.refreshToken);
+      await _secureStorage.saveRole(result.loginMode);
       await _secureStorage.saveUserId(result.member.memberId);
       await _secureStorage.saveUserName(result.member.name);
 

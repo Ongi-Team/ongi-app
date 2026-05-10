@@ -53,7 +53,6 @@ class RoleSelectViewModel extends ChangeNotifier {
         osType: osType,
       ));
 
-      await _storage.saveRole(_selectedRole!.name);
       _authSession.clear();
 
       switch (_selectedRole!) {
