@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ongi_app/core/constants/constants.dart';
 import 'package:ongi_app/core/enums/user_role.dart';
 import 'package:ongi_app/core/router/routes.dart';
 import 'package:provider/provider.dart';
@@ -58,11 +59,24 @@ class _RoleSelectView extends StatelessWidget {
 
               const Spacer(),
 
+              if (vm.errorMessage != null) ...[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    vm.errorMessage!,
+                    style: OngiTextStyle.body15.copyWith(
+                      color: const Color(0xFFE53935),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+
               // 다음 버튼 (role 선택 후 활성화)
               BasicButton(
-                text: '다음',
-                isClickable: vm.selectedRole != null,
-                onPressed: vm.selectedRole == null
+                text: vm.isLoading ? '로그인 중...' : '다음',
+                isClickable: vm.selectedRole != null && !vm.isLoading,
+                onPressed: vm.selectedRole == null || vm.isLoading
                     ? null
                     : () => vm.confirm(
                           context: context,
