@@ -7,7 +7,8 @@ class BasicAppBar extends StatelessWidget {
   final String subtitle;
   final VoidCallback onBackButtonPressed;
 
-  BasicAppBar({
+  const BasicAppBar({
+    super.key,
     required this.title,
     required this.subtitle,
     required this.onBackButtonPressed,
