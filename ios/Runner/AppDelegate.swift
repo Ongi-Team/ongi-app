@@ -31,4 +31,11 @@ class AppDelegate: FlutterAppDelegate, MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("[FCM] Native token: \(fcmToken ?? "nil")")
     }
+
+    // 앱이 포그라운드일 때도 알림 표시
+    override func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                         willPresent notification: UNNotification,
+                                         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .sound, .badge])
+    }
 }
