@@ -85,14 +85,14 @@ class _LoginView extends StatelessWidget {
                       : () => vm.login(
                             onSuccess: () {
                               if (!context.mounted) return;
-                              context.go(AppRoutes.roleSelect);
+                              context.push(AppRoutes.roleSelect);
                             },
                           ),
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
-                  height: 54,
+                  height: 50,
                   child: OutlinedButton(
                     onPressed: () => context.push(AppRoutes.signup),
                     style: OutlinedButton.styleFrom(
@@ -100,7 +100,7 @@ class _LoginView extends StatelessWidget {
                       side: const BorderSide(
                           color: OngiColor.primary, width: 1.5),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                     child: Text(

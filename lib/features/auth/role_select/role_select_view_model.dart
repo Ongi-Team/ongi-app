@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:ongi_app/core/di/service_locator.dart';
 import 'package:ongi_app/core/enums/user_role.dart';
+import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 
 class RoleSelectViewModel extends ChangeNotifier {
+  final _storage = getIt<SecureStorageRepository>();
+
   UserRole? _selectedRole;
 
   UserRole? get selectedRole => _selectedRole;
@@ -11,12 +15,14 @@ class RoleSelectViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void confirm({
+  Future<void> confirm({
     required BuildContext context,
     required VoidCallback onGuardian,
     required VoidCallback onElder,
-  }) {
+  }) async {
     if (_selectedRole == null) return;
+
+    await _storage.saveRole(_selectedRole!.name);
 
     switch (_selectedRole!) {
       case UserRole.GUARDIAN:

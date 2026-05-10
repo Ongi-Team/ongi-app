@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ongi_app/core/enums/user_role.dart';
 import 'package:ongi_app/core/router/routes.dart';
 import 'package:provider/provider.dart';
@@ -65,14 +66,8 @@ class _RoleSelectView extends StatelessWidget {
                     ? null
                     : () => vm.confirm(
                           context: context,
-                          onGuardian: () => Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.guardianHome,
-                          ),
-                          onElder: () => Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.elderHome,
-                          ),
+                          onGuardian: () => context.go(AppRoutes.guardianHome),
+                          onElder: () => context.go(AppRoutes.elderHome),
                         ),
               ),
 

@@ -9,7 +9,9 @@ import 'package:ongi_app/features/auth/signup/signup_complete_screen.dart';
 import 'package:ongi_app/features/auth/signup/phone_number_screen.dart';
 import 'package:ongi_app/features/auth/signup/signup_view_model.dart';
 import 'package:ongi_app/features/elder/elder_shell.dart';
+import 'package:ongi_app/features/elder/home/elder_home_screen.dart';
 import 'package:ongi_app/features/guardian/guardian_shell.dart';
+import 'package:ongi_app/features/guardian/home/guardian_home_screen.dart';
 import 'routes.dart';
 
 final appRouter = GoRouter(
@@ -58,7 +60,7 @@ final appRouter = GoRouter(
         StatefulShellBranch(routes: [
           GoRoute(
             path: AppRoutes.guardianHome,
-            builder: (context, state) => const _PlaceholderScreen(label: '홈'),
+            builder: (context, state) => const GuardianHomeScreen(),
           ),
         ]),
         StatefulShellBranch(routes: [
@@ -84,7 +86,7 @@ final appRouter = GoRouter(
         StatefulShellBranch(routes: [
           GoRoute(
             path: AppRoutes.elderHome,
-            builder: (context, state) => const _PlaceholderScreen(label: '홈'),
+            builder: (context, state) => const ElderHomeScreen(),
           ),
         ]),
         StatefulShellBranch(routes: [
