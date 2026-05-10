@@ -3,15 +3,13 @@ class LoginResponseDto {
   final String refreshToken;
   final String loginMode;
   final MemberResponseDto member;
-  final List<ElderResponseDto>? elders;
-  final ElderResponseDto? elder;
+  final List<ElderResponseDto>? elder;
 
   const LoginResponseDto({
     required this.accessToken,
     required this.refreshToken,
     required this.loginMode,
     required this.member,
-    this.elders,
     this.elder,
   });
 
@@ -20,13 +18,11 @@ class LoginResponseDto {
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
       loginMode: json['loginMode'] as String,
-      member: MemberResponseDto.fromJson(json['member'] as Map<String, dynamic>),
-      elders: (json['elders'] as List<dynamic>?)
+      member:
+          MemberResponseDto.fromJson(json['member'] as Map<String, dynamic>),
+      elder: (json['elder'] as List<dynamic>?)
           ?.map((e) => ElderResponseDto.fromJson(e as Map<String, dynamic>))
           .toList(),
-      elder: json['elder'] != null
-          ? ElderResponseDto.fromJson(json['elder'] as Map<String, dynamic>)
-          : null,
     );
   }
 }
