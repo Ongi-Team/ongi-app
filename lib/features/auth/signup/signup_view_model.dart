@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:ongi_app/data/network/api_exception.dart';
+import 'package:ongi_app/data/services/auth_service.dart';
 
 class SignupViewModel extends ChangeNotifier {
   SignupViewModel() {
     phoneController.addListener(notifyListeners);
     verificationCodeController.addListener(notifyListeners);
-    idController.addListener(notifyListeners);
+    idController.addListener(_onIdChanged);
     passwordController.addListener(notifyListeners);
     confirmPasswordController.addListener(notifyListeners);
     elderlyNameController.addListener(notifyListeners);
@@ -34,17 +37,59 @@ class SignupViewModel extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
+  // 아이디 중복 확인 상태
+  bool? _isIdAvailable;
+  bool _isCheckingId = false;
+  String? _idCheckMessage;
+
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  bool? get isIdAvailable => _isIdAvailable;
+  bool get isCheckingId => _isCheckingId;
+  String? get idCheckMessage => _idCheckMessage;
+
+  void _onIdChanged() {
+    if (_isIdAvailable != null || _idCheckMessage != null) {
+      _isIdAvailable = null;
+      _idCheckMessage = null;
+    }
+    notifyListeners();
+  }
+
+  Future<void> checkId() async {
+    final loginId = idController.text.trim();
+    if (loginId.isEmpty) return;
+
+    _isCheckingId = true;
+    _idCheckMessage = null;
+    _isIdAvailable = null;
+    notifyListeners();
+
+    try {
+      final available = await GetIt.instance<AuthService>().checkId(loginId);
+      _isIdAvailable = available;
+      _idCheckMessage = available ? '사용 가능한 아이디입니다.' : '이미 사용 중인 아이디입니다.';
+    } on ApiException catch (e) {
+      _isIdAvailable = false;
+      _idCheckMessage = e.message;
+    } catch (_) {
+      _isIdAvailable = false;
+      _idCheckMessage = '아이디 확인에 실패했습니다. 다시 시도해주세요.';
+    } finally {
+      _isCheckingId = false;
+      notifyListeners();
+    }
+  }
 
   // Step 1 유효성
   bool get canProceedFromPhone =>
       phoneController.text.isNotEmpty &&
       verificationCodeController.text.isNotEmpty;
 
-  // Step 2 유효성
+  // Step 2 유효성 — 아이디 중복 확인 통과 필요
   bool get canProceedFromAccountInfo =>
       idController.text.isNotEmpty &&
+      _isIdAvailable == true &&
       passwordController.text.isNotEmpty &&
       confirmPasswordController.text.isNotEmpty &&
       passwordController.text == confirmPasswordController.text;
@@ -95,7 +140,7 @@ class SignupViewModel extends ChangeNotifier {
   void dispose() {
     phoneController.removeListener(notifyListeners);
     verificationCodeController.removeListener(notifyListeners);
-    idController.removeListener(notifyListeners);
+    idController.removeListener(_onIdChanged);
     passwordController.removeListener(notifyListeners);
     confirmPasswordController.removeListener(notifyListeners);
     elderlyNameController.removeListener(notifyListeners);

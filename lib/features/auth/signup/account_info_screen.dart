@@ -37,11 +37,72 @@ class AccountInfoScreen extends StatelessWidget {
                   onBackButtonPressed: () => context.pop(),
                 ),
                 const SizedBox(height: 40),
-                BasicTextField(
-                  label: '아이디',
-                  hintText: '사용하실 아이디를 입력해주세요',
-                  controller: vm.idController,
-                  keyboardType: TextInputType.text,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: BasicTextField(
+                            label: '아이디',
+                            hintText: '사용하실 아이디를 입력해주세요',
+                            controller: vm.idController,
+                            keyboardType: TextInputType.text,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          height: 56,
+                          child: OutlinedButton(
+                            onPressed: vm.idController.text.trim().isEmpty ||
+                                    vm.isCheckingId
+                                ? null
+                                : vm.checkId,
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: OngiColor.primary, width: 1.5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 14),
+                              disabledForegroundColor: OngiColor.systemGray03,
+                              disabledMouseCursor: SystemMouseCursors.basic,
+                            ),
+                            child: vm.isCheckingId
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: OngiColor.primary,
+                                    ),
+                                  )
+                                : Text(
+                                    '중복 확인',
+                                    style: OngiTextStyle.caption12.copyWith(
+                                      color: vm.idController.text.trim().isEmpty
+                                          ? OngiColor.systemGray03
+                                          : OngiColor.primary,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (vm.idCheckMessage != null) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        vm.idCheckMessage!,
+                        style: OngiTextStyle.caption12.copyWith(
+                          color: vm.isIdAvailable == true
+                              ? OngiColor.success
+                              : OngiColor.fail,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 24),
                 BasicTextField(

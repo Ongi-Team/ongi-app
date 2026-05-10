@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:ongi_app/core/constants/apis.dart';
+import 'package:ongi_app/data/network/api_exception.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 
 class AuthService {
@@ -24,6 +26,22 @@ class AuthService {
     await _secureStorage.saveAccessToken(newAccessToken);
     if (newRefreshToken != null) {
       await _secureStorage.saveRefreshToken(newRefreshToken);
+    }
+  }
+
+  Future<bool> checkId(String loginId) async {
+    try {
+      final response = await _dio.get(
+        Apis.getCheckId,
+        queryParameters: {'loginId': loginId},
+        options: Options(extra: {'skipAuthToken': true}),
+      );
+      return response.data['data']['available'] as bool;
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '아이디 확인에 실패했습니다.',
+        e.response?.statusCode,
+      );
     }
   }
 }
