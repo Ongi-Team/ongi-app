@@ -78,7 +78,7 @@ class _LoginView extends StatelessWidget {
                 ],
                 const Spacer(flex: 2),
                 BasicButton(
-                  text: vm.isLoading ? '로그인 중...' : '로그인',
+                  text: '로그인',
                   isClickable: !vm.isLoading,
                   onPressed: vm.isLoading
                       ? null

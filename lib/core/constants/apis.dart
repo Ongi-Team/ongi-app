@@ -10,7 +10,11 @@ abstract class Apis {
   static const String postSignup = "api/auth/signup";
   static const String reissueToken = "auth/reissue";
 
+  /// 멤버 관련 api
+  static const String fcmToken = "api/members/fcm-token";
+
   /// 로그인 관련 api
+  static const String postLogin = "api/auth/login";
   static const String getCheckId = "api/auth/check-id";
   static const String postPhoneVerify = "api/auth/phone/verify";
   static const String sendPhoneNumber = "api/auth/phone/send";

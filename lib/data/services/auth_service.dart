@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:ongi_app/core/constants/apis.dart';
+import 'package:ongi_app/data/dto/request/login_request_dto.dart';
 import 'package:ongi_app/data/dto/request/signup_request_dto.dart';
+import 'package:ongi_app/data/dto/response/login_response_dto.dart';
 import 'package:ongi_app/data/network/api_exception.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 
@@ -9,6 +11,31 @@ class AuthService {
   final SecureStorageRepository _secureStorage;
 
   AuthService(this._dio, this._secureStorage);
+
+  Future<LoginResponseDto> login(LoginRequestDto dto) async {
+    try {
+      final response = await _dio.post(
+        Apis.postLogin,
+        data: dto.toJson(),
+        options: Options(extra: {'skipAuthToken': true}),
+      );
+      final data = response.data['data'] as Map<String, dynamic>;
+      final result = LoginResponseDto.fromJson(data);
+
+      await _secureStorage.saveAccessToken(result.accessToken);
+      await _secureStorage.saveRefreshToken(result.refreshToken);
+      await _secureStorage.saveRole(result.loginMode);
+      await _secureStorage.saveUserId(result.member.memberId);
+      await _secureStorage.saveUserName(result.member.name);
+
+      return result;
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '로그인에 실패했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
 
   Future<void> reissueToken() async {
     final refreshToken = await _secureStorage.readRefreshToken();

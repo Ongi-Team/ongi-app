@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:ongi_app/core/di/service_locator.dart';
+import 'package:ongi_app/data/services/auth_session.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  final _authSession = getIt<AuthSession>();
+
   final TextEditingController idController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -10,7 +14,6 @@ class LoginViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // 로그인 버튼 활성화 조건
   bool get canLogin =>
       idController.text.isNotEmpty && passwordController.text.isNotEmpty;
 
@@ -29,9 +32,7 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // TODO: 실제 로그인 API 호출
-      await Future.delayed(const Duration(seconds: 1)); // 임시 딜레이
-
+      _authSession.set(idController.text.trim(), passwordController.text);
       onSuccess();
     } catch (e) {
       _errorMessage = '아이디 또는 비밀번호가 올바르지 않습니다.';

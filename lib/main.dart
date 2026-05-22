@@ -1,13 +1,20 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/constants/constants.dart';
 import 'core/di/service_locator.dart';
 import 'core/router/app_router.dart';
+import 'core/utils/foreground_notification.dart';
+import 'core/utils/notification_permission.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupServiceLocator();
+  await requestNotificationPermission();
+  await initForegroundNotification();
   runApp(const MyApp());
 }
 
