@@ -71,6 +71,17 @@ class SecureStorageRepository {
     await _storage.write(key: 'fcm_token', value: token);
   }
 
+  ///FCM 토큰을 제외한 로그인 세션 데이터 삭제
+  Future<void> deleteAuthData() async {
+    await _storage.delete(key: 'access_token');
+    await _storage.delete(key: 'refresh_token');
+    await _storage.delete(key: 'role');
+    await _storage.delete(key: 'userId');
+    await _storage.delete(key: 'user_name');
+    await _storage.delete(key: 'elderId');
+    await _storage.delete(key: 'elder_name');
+  }
+
   ///모든 데이터 삭제
   Future<void> deleteAllData() async {
     await _storage.deleteAll();
