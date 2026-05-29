@@ -89,6 +89,18 @@ class AuthService {
     }
   }
 
+  Future<void> logout() async {
+    try {
+      await _dio.post(Apis.postLogout);
+      await _secureStorage.deleteAllData();
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '로그아웃에 실패했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
+
   Future<void> signup(SignupRequestDto dto) async {
     try {
       await _dio.post(
