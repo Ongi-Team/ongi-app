@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/constants/constants.dart';
+import 'package:ongi_app/shared/widgets/custom_header.dart';
 import 'package:provider/provider.dart';
 
-import 'guardian_home_header.dart';
 import 'guardian_home_view_model.dart';
 
 class GuardianHomeScreen extends StatelessWidget {
@@ -35,7 +35,7 @@ class _GuardianHomeView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. 상단 아이콘 및 날짜/타이틀 영역
-              GuardianHomeHeader(
+              CustomHeader(
                 dateText: vm.todayText,
                 name: vm.memberName,
                 greeting: vm.greeting,

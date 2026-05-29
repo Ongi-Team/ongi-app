@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ongi_app/core/constants/constants.dart';
 
-class GuardianHomeHeader extends StatelessWidget {
-  const GuardianHomeHeader({
+class CustomHeader extends StatelessWidget {
+  const CustomHeader({
     super.key,
     required this.dateText,
     required this.name,

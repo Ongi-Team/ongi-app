@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ongi_app/core/constants/constants.dart';
-import 'package:ongi_app/features/guardian/setting/setting_view_model.dart';
+import 'package:ongi_app/features/guardian/setting/guardian_setting_view_model.dart';
 
 class GuardianSettingScreen extends StatelessWidget {
   const GuardianSettingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = SettingViewModel();
+    final viewModel = GuardianSettingViewModel();
     final menuItems = viewModel.getMenuItems(context);
 
     return Scaffold(

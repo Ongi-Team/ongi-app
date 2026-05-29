@@ -15,10 +15,12 @@ abstract class Apis {
 
   /// 복약 관련 api
   static const String getMedications = "api/medicine/medications";
+  static const String getMedicineSchedules = "api/medicine/schedules";
 
   /// 로그인 관련 api
   static const String postLogin = "api/auth/login";
   static const String postLoginMode = "api/auth/login/mode";
+  static const String postLogout = "api/auth/logout";
   static const String getCheckId = "api/auth/check-id";
   static const String postPhoneVerify = "api/auth/phone/verify";
   static const String sendPhoneNumber = "api/auth/phone/send";
