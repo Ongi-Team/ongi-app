@@ -46,6 +46,23 @@ class SecureStorageRepository {
     return value != null ? int.tryParse(value) : null;
   }
 
+  Future<void> saveElderId(int elderId) async {
+    await _storage.write(key: 'elderId', value: elderId.toString());
+  }
+
+  Future<int?> getElderId() async {
+    final value = await _storage.read(key: 'elderId');
+    return value != null ? int.tryParse(value) : null;
+  }
+
+  Future<void> saveElderName(String name) async {
+    await _storage.write(key: 'elder_name', value: name);
+  }
+
+  Future<String?> readElderName() async {
+    return await _storage.read(key: 'elder_name');
+  }
+
   Future<String?> readFcmToken() async {
     return await _storage.read(key: 'fcm_token');
   }

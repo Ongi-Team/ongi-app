@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/di/service_locator.dart';
+import 'package:ongi_app/data/dto/request/login_session_request_dto.dart';
+import 'package:ongi_app/data/services/auth_service.dart';
 import 'package:ongi_app/data/services/auth_session.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  final _authService = getIt<AuthService>();
   final _authSession = getIt<AuthSession>();
 
   final TextEditingController idController = TextEditingController();
@@ -32,7 +35,13 @@ class LoginViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _authSession.set(idController.text.trim(), passwordController.text);
+      final result = await _authService.createLoginSession(
+        LoginSessionRequestDto(
+          loginId: idController.text.trim(),
+          password: passwordController.text,
+        ),
+      );
+      _authSession.setLoginSessionToken(result.loginSessionToken);
       onSuccess();
     } catch (e) {
       _errorMessage = '아이디 또는 비밀번호가 올바르지 않습니다.';

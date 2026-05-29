@@ -2,14 +2,14 @@ class LoginResponseDto {
   final String accessToken;
   final String refreshToken;
   final String loginMode;
-  final MemberResponseDto member;
-  final List<ElderResponseDto>? elder;
+  final MemberResponseDto? member;
+  final ElderResponseDto? elder;
 
   const LoginResponseDto({
     required this.accessToken,
     required this.refreshToken,
     required this.loginMode,
-    required this.member,
+    this.member,
     this.elder,
   });
 
@@ -18,11 +18,12 @@ class LoginResponseDto {
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
       loginMode: json['loginMode'] as String,
-      member:
-          MemberResponseDto.fromJson(json['member'] as Map<String, dynamic>),
-      elder: (json['elder'] as List<dynamic>?)
-          ?.map((e) => ElderResponseDto.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      member: json['member'] == null
+          ? null
+          : MemberResponseDto.fromJson(json['member'] as Map<String, dynamic>),
+      elder: json['elder'] == null
+          ? null
+          : ElderResponseDto.fromJson(json['elder'] as Map<String, dynamic>),
     );
   }
 }

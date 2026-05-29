@@ -4,6 +4,7 @@ import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 import 'package:ongi_app/data/services/auth_service.dart';
 import 'package:ongi_app/data/services/auth_session.dart';
 import 'package:ongi_app/data/services/member_service.dart';
+import 'package:ongi_app/data/services/medicine_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -26,5 +27,8 @@ void setupServiceLocator() {
       getIt<ApiClient>().dio,
       getIt<SecureStorageRepository>(),
     ),
+  );
+  getIt.registerLazySingleton<MedicineService>(
+    () => MedicineService(getIt<ApiClient>().dio),
   );
 }

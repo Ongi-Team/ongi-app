@@ -33,9 +33,8 @@ class RoleSelectViewModel extends ChangeNotifier {
   }) async {
     if (_selectedRole == null) return;
 
-    final loginId = _authSession.pendingLoginId;
-    final password = _authSession.pendingPassword;
-    if (loginId == null || password == null) return;
+    final loginSessionToken = _authSession.loginSessionToken;
+    if (loginSessionToken == null) return;
 
     _isLoading = true;
     _errorMessage = null;
@@ -46,8 +45,7 @@ class RoleSelectViewModel extends ChangeNotifier {
       final osType = Platform.isIOS ? 'IOS' : 'ANDROID';
 
       await _authService.login(LoginRequestDto(
-        loginId: loginId,
-        password: password,
+        loginSessionToken: loginSessionToken,
         loginMode: _selectedRole!.name,
         fcmToken: fcmToken,
         osType: osType,

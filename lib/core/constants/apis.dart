@@ -13,8 +13,12 @@ abstract class Apis {
   /// 멤버 관련 api
   static const String fcmToken = "api/members/fcm-token";
 
+  /// 복약 관련 api
+  static const String getMedications = "api/medicine/medications";
+
   /// 로그인 관련 api
   static const String postLogin = "api/auth/login";
+  static const String postLoginMode = "api/auth/login/mode";
   static const String getCheckId = "api/auth/check-id";
   static const String postPhoneVerify = "api/auth/phone/verify";
   static const String sendPhoneNumber = "api/auth/phone/send";
