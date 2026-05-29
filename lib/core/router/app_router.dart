@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ongi_app/features/auth/login/login_screen.dart';
@@ -10,6 +9,7 @@ import 'package:ongi_app/features/auth/signup/phone_number_screen.dart';
 import 'package:ongi_app/features/auth/signup/signup_view_model.dart';
 import 'package:ongi_app/features/elder/elder_shell.dart';
 import 'package:ongi_app/features/elder/home/elder_home_screen.dart';
+import 'package:ongi_app/features/elder/setting/elder_setting_screen.dart';
 import 'package:ongi_app/features/guardian/guardian_shell.dart';
 import 'package:ongi_app/features/guardian/home/guardian_home_screen.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_screen.dart';
@@ -94,20 +94,10 @@ final appRouter = GoRouter(
         StatefulShellBranch(routes: [
           GoRoute(
             path: AppRoutes.elderSettings,
-            builder: (context, state) => const _PlaceholderScreen(label: '설정'),
+            builder: (context, state) => const ElderSettingScreen(),
           ),
         ]),
       ],
     ),
   ],
 );
-
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text(label)));
-  }
-}
