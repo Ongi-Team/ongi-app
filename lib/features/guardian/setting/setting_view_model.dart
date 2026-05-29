@@ -30,7 +30,7 @@ class SettingViewModel extends ChangeNotifier {
       ),
       SettingMenuItem(
         title: '로그아웃',
-        onTap: () => _showWithdrawalDialog(context),
+        onTap: () => _showLogoutDialog(context),
       ),
       SettingMenuItem(
         title: '회원탈퇴',

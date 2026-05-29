@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/constants/styles.dart';
-import 'package:ongi_app/features/guardian/home/guardian_home_header.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_view_model.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
+import 'package:ongi_app/shared/widgets/custom_header.dart';
 
 class GuardianScheduleScreen extends StatefulWidget {
   const GuardianScheduleScreen({super.key});
@@ -45,7 +45,7 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
                 children: [
                   const SizedBox(height: 20),
                   // 1. 상단 타이틀 영역
-                  GuardianHomeHeader(
+                  CustomHeader(
                     dateText: _viewModel.todayText,
                     name: _viewModel.memberName,
                     greeting: _viewModel.greeting,
