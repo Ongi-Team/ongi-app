@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ongi_app/core/constants/constants.dart';
 import 'package:provider/provider.dart';
 
+import 'guardian_home_header.dart';
 import 'guardian_home_view_model.dart';
 
 class GuardianHomeScreen extends StatelessWidget {
@@ -35,31 +35,10 @@ class _GuardianHomeView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. 상단 아이콘 및 날짜/타이틀 영역
-              SvgPicture.asset(
-                'assets/logo.svg',
-                height: 28,
-              ),
-              const SizedBox(height: 16),
-              Text(vm.todayText, style: OngiTextStyle.body15),
-              const SizedBox(height: 4),
-              RichText(
-                text: TextSpan(
-                  style: const TextStyle(
-                      fontSize: 20, color: Colors.black, height: 1.3),
-                  children: [
-                    TextSpan(
-                      text: '${vm.memberName}님',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const TextSpan(text: '의 일정이에요'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                vm.greeting,
-                style: OngiTextStyle.body15
-                    .copyWith(color: OngiColor.systemGray03),
+              GuardianHomeHeader(
+                dateText: vm.todayText,
+                name: vm.memberName,
+                greeting: vm.greeting,
               ),
               const SizedBox(height: 32),
 

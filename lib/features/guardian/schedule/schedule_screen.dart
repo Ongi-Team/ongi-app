@@ -1,0 +1,175 @@
+import 'package:flutter/material.dart';
+import 'package:ongi_app/core/constants/styles.dart';
+import 'package:ongi_app/features/guardian/home/guardian_home_header.dart';
+import 'package:ongi_app/features/guardian/schedule/schedule_view_model.dart';
+import 'package:ongi_app/shared/widgets/basic_button.dart';
+
+class GuardianScheduleScreen extends StatefulWidget {
+  const GuardianScheduleScreen({super.key});
+
+  @override
+  State<GuardianScheduleScreen> createState() => _GuardianScheduleScreenState();
+}
+
+class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
+  // 뷰모델 생성
+  final ScheduleViewModel _viewModel = ScheduleViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel.loadHeaderData();
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const primaryColor = Color(0xFFF27A35);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: ListenableBuilder(
+          listenable: _viewModel,
+          builder: (context, _) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  // 1. 상단 타이틀 영역
+                  GuardianHomeHeader(
+                    dateText: _viewModel.todayText,
+                    name: _viewModel.memberName,
+                    greeting: _viewModel.greeting,
+                  ),
+                  const SizedBox(height: 32),
+
+                  // 2. '약' 타이틀 및 '추가하기' 버튼 영역
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '약',
+                        style: OngiTextStyle.subTitle
+                            .copyWith(color: primaryColor),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // 테스트용 데이터 추가 예시 (실제로는 다이얼로그나 새 창을 띄우시면 됩니다)
+                          _viewModel.addMedication('비타민', '13:00');
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              '추가하기',
+                              style: OngiTextStyle.subTitle
+                                  .copyWith(color: primaryColor),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.add_circle,
+                                color: primaryColor, size: 20),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 3. 약 목록 리스트 영역
+                  Expanded(
+                    child: _viewModel.medications.isEmpty
+                        ? const Center(child: Text('등록된 약 일정이 없습니다.'))
+                        : ListView.separated(
+                            itemCount: _viewModel.medications.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final medication = _viewModel.medications[index];
+                              return _buildMedicationCard(
+                                index: index + 1,
+                                medication: medication,
+                                onDelete: () =>
+                                    _viewModel.removeMedication(medication.id),
+                              );
+                            },
+                          ),
+                  ),
+
+                  // 4. 하단 '약통 열기' 버튼
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    child: BasicButton(
+                      text: '약통 열기',
+                      isClickable: true,
+                      onPressed: () => _viewModel.openPillBox(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  // 약 리스트의 단일 아이템 카드 빌더
+  Widget _buildMedicationCard({
+    required int index,
+    required MedicationModel medication,
+    required VoidCallback onDelete,
+  }) {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200, width: 1.5),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          // 번호 (예: 1.)
+          Text(
+            '$index.',
+            style: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          const SizedBox(width: 16),
+          // 약 이름
+          Text(
+            medication.name,
+            style: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          const Spacer(),
+          // 시간
+          Text(
+            medication.time,
+            style: const TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          const SizedBox(width: 24),
+          // 삭제 버튼
+          GestureDetector(
+            onTap: onDelete,
+            child: const Text(
+              '삭제',
+              style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
