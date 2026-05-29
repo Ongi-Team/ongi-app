@@ -15,6 +15,7 @@ abstract class Apis {
 
   /// 로그인 관련 api
   static const String postLogin = "api/auth/login";
+  static const String postLoginMode = "api/auth/login/mode";
   static const String getCheckId = "api/auth/check-id";
   static const String postPhoneVerify = "api/auth/phone/verify";
   static const String sendPhoneNumber = "api/auth/phone/send";

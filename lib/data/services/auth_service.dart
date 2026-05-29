@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:ongi_app/core/constants/apis.dart';
 import 'package:ongi_app/data/dto/request/login_request_dto.dart';
+import 'package:ongi_app/data/dto/request/login_session_request_dto.dart';
 import 'package:ongi_app/data/dto/request/signup_request_dto.dart';
 import 'package:ongi_app/data/dto/response/login_response_dto.dart';
+import 'package:ongi_app/data/dto/response/login_session_response_dto.dart';
 import 'package:ongi_app/data/network/api_exception.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 
@@ -12,10 +14,29 @@ class AuthService {
 
   AuthService(this._dio, this._secureStorage);
 
-  Future<LoginResponseDto> login(LoginRequestDto dto) async {
+  Future<LoginSessionResponseDto> createLoginSession(
+    LoginSessionRequestDto dto,
+  ) async {
     try {
       final response = await _dio.post(
         Apis.postLogin,
+        data: dto.toJson(),
+        options: Options(extra: {'skipAuthToken': true}),
+      );
+      final data = response.data['data'] as Map<String, dynamic>;
+      return LoginSessionResponseDto.fromJson(data);
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '로그인에 실패했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
+
+  Future<LoginResponseDto> login(LoginRequestDto dto) async {
+    try {
+      final response = await _dio.post(
+        Apis.postLoginMode,
         data: dto.toJson(),
         options: Options(extra: {'skipAuthToken': true}),
       );
@@ -25,8 +46,15 @@ class AuthService {
       await _secureStorage.saveAccessToken(result.accessToken);
       await _secureStorage.saveRefreshToken(result.refreshToken);
       await _secureStorage.saveRole(result.loginMode);
-      await _secureStorage.saveUserId(result.member.memberId);
-      await _secureStorage.saveUserName(result.member.name);
+      final member = result.member;
+      final elder = result.elder;
+      if (member != null) {
+        await _secureStorage.saveUserId(member.memberId);
+        await _secureStorage.saveUserName(member.name);
+      } else if (elder != null) {
+        await _secureStorage.saveUserId(elder.elderId);
+        await _secureStorage.saveUserName(elder.name);
+      }
 
       return result;
     } on DioException catch (e) {
