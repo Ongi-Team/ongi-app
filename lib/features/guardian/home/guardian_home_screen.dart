@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ongi_app/core/constants/constants.dart';
-import 'package:ongi_app/core/constants/styles.dart';
+import 'package:provider/provider.dart';
+
+import 'guardian_home_view_model.dart';
 
 class GuardianHomeScreen extends StatelessWidget {
   const GuardianHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => GuardianHomeViewModel(),
+      child: const _GuardianHomeView(),
+    );
+  }
+}
+
+class _GuardianHomeView extends StatelessWidget {
+  const _GuardianHomeView();
+
+  @override
+  Widget build(BuildContext context) {
+    final vm = context.watch<GuardianHomeViewModel>();
     // 주황색 포인트 컬러 (사용하시는 브랜드 컬러가 있다면 바꿔주세요)
     const primaryColor = Color(0xFFF27A35);
-    final todayText = _formatToday(DateTime.now());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -26,24 +40,24 @@ class GuardianHomeScreen extends StatelessWidget {
                 height: 28,
               ),
               const SizedBox(height: 16),
-              Text(todayText, style: OngiTextStyle.body15),
+              Text(vm.todayText, style: OngiTextStyle.body15),
               const SizedBox(height: 4),
               RichText(
-                text: const TextSpan(
-                  style:
-                      TextStyle(fontSize: 20, color: Colors.black, height: 1.3),
+                text: TextSpan(
+                  style: const TextStyle(
+                      fontSize: 20, color: Colors.black, height: 1.3),
                   children: [
                     TextSpan(
-                      text: '홍길동님',
-                      style: OngiTextStyle.subTitle,
+                      text: '${vm.memberName}님',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    TextSpan(text: '의 일정이에요'),
+                    const TextSpan(text: '의 일정이에요'),
                   ],
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                '오늘도 따뜻한 하루 보내세요',
+                vm.greeting,
                 style: OngiTextStyle.body15
                     .copyWith(color: OngiColor.systemGray03),
               ),
@@ -62,19 +76,10 @@ class GuardianHomeScreen extends StatelessWidget {
                   border: Border.all(color: Colors.grey.shade200, width: 1.5),
                 ),
                 child: Column(
-                  children: [
-                    _buildMedicationTile('감기약', '08:30',
-                        isChecked: false, color: primaryColor),
-                    _buildDivider(),
-                    _buildMedicationTile('혈압약', '12:00',
-                        isChecked: true, color: primaryColor),
-                    _buildDivider(),
-                    _buildMedicationTile('비타민', '17:00',
-                        isChecked: true, color: primaryColor),
-                    _buildDivider(),
-                    _buildMedicationTile('감기약', '17:00',
-                        isChecked: false, color: primaryColor),
-                  ],
+                  children: _buildSeparatedMedicationTiles(
+                    vm.medications,
+                    primaryColor,
+                  ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -93,10 +98,12 @@ class GuardianHomeScreen extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Column(
-                  children: [
-                    _buildDeviceStatusTile('디바이스 정상 작동', isNormal: true),
-                    _buildDeviceStatusTile('네트워크 정상 연결', isNormal: true),
-                  ],
+                  children: vm.deviceStatuses
+                      .map((item) => _buildDeviceStatusTile(
+                            item.title,
+                            isNormal: item.isNormal,
+                          ))
+                      .toList(),
                 ),
               ),
             ],
@@ -108,14 +115,21 @@ class GuardianHomeScreen extends StatelessWidget {
 
   // --- 위젯을 간결하게 유지하기 위한 컴포넌트 팩토리 메서드들 ---
 
-  String _formatToday(DateTime date) {
-    const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
-    final year = date.year.toString();
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-    final weekday = weekdays[date.weekday - 1];
-
-    return '$year. $month. $day($weekday)';
+  List<Widget> _buildSeparatedMedicationTiles(
+    List<MedicationItem> items,
+    Color primaryColor,
+  ) {
+    return [
+      for (var i = 0; i < items.length; i++) ...[
+        _buildMedicationTile(
+          items[i].title,
+          items[i].time,
+          isChecked: items[i].isChecked,
+          color: primaryColor,
+        ),
+        if (i < items.length - 1) _buildDivider(),
+      ],
+    ];
   }
 
   // 복약 체크 리스트 스타일 빌더
