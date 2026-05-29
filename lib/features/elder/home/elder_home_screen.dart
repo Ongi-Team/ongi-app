@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ongi_app/features/elder/home/elder_home_refresh_notifier.dart';
 import 'package:ongi_app/features/elder/home/elder_view_model.dart';
 import 'package:ongi_app/shared/widgets/custom_header.dart';
 
@@ -15,13 +16,20 @@ class _ElderHomeScreenState extends State<ElderHomeScreen> {
   @override
   void initState() {
     super.initState();
-    viewModel.loadHeaderData();
+    _refreshHome();
+    ElderHomeRefreshNotifier.signal.addListener(_refreshHome);
   }
 
   @override
   void dispose() {
+    ElderHomeRefreshNotifier.signal.removeListener(_refreshHome);
     viewModel.dispose();
     super.dispose();
+  }
+
+  void _refreshHome() {
+    viewModel.loadHeaderData();
+    viewModel.loadMedicineSchedules();
   }
 
   @override
@@ -36,6 +44,7 @@ class _ElderHomeScreenState extends State<ElderHomeScreen> {
           builder: (context, _) {
             final isActive =
                 viewModel.status == MedicationReminderStatus.active;
+            final isLoading = viewModel.isScheduleLoading;
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -68,7 +77,7 @@ class _ElderHomeScreenState extends State<ElderHomeScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '혈압약',
+                            isLoading ? '불러오는 중' : viewModel.medicineName,
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -79,7 +88,10 @@ class _ElderHomeScreenState extends State<ElderHomeScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            isActive ? '지금 드세요' : '다음에 복용',
+                            viewModel.scheduleErrorMessage ??
+                                (viewModel.currentSchedule == null
+                                    ? '복용할 약이 없어요'
+                                    : viewModel.reminderMessage),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -90,7 +102,7 @@ class _ElderHomeScreenState extends State<ElderHomeScreen> {
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            '오전 7:00',
+                            viewModel.scheduledTimeText,
                             style: TextStyle(
                               fontSize: 48,
                               fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ongi_app/features/elder/home/elder_home_refresh_notifier.dart';
 import 'package:ongi_app/features/elder/nav/elderly_navigation.dart';
 
 class ElderShell extends StatelessWidget {
@@ -13,10 +14,15 @@ class ElderShell extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: ElderlyNavigation(
         currentIndex: navigationShell.currentIndex,
-        onTap: (index) => navigationShell.goBranch(
-          index,
-          initialLocation: index == navigationShell.currentIndex,
-        ),
+        onTap: (index) {
+          if (index == 0) {
+            ElderHomeRefreshNotifier.refresh();
+          }
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
+        },
       ),
     );
   }
