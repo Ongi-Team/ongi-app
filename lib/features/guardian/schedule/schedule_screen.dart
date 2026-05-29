@@ -3,6 +3,7 @@ import 'package:ongi_app/core/constants/styles.dart';
 import 'package:ongi_app/features/guardian/home/guardian_home_header.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_view_model.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
+import 'package:ongi_app/shared/widgets/basic_text_field.dart';
 
 class GuardianScheduleScreen extends StatefulWidget {
   const GuardianScheduleScreen({super.key});
@@ -61,10 +62,7 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
                             .copyWith(color: primaryColor),
                       ),
                       GestureDetector(
-                        onTap: () {
-                          // 테스트용 데이터 추가 예시 (실제로는 다이얼로그나 새 창을 띄우시면 됩니다)
-                          _viewModel.addMedication('비타민', '13:00');
-                        },
+                        onTap: _showAddMedicationDialog,
                         child: Row(
                           children: [
                             Text(
@@ -120,6 +118,16 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
     );
   }
 
+  Future<void> _showAddMedicationDialog() async {
+    final medication = await showDialog<_MedicationInput>(
+      context: context,
+      builder: (_) => const _AddMedicationDialog(),
+    );
+
+    if (medication == null) return;
+    _viewModel.addMedication(medication.name, medication.time);
+  }
+
   // 약 리스트의 단일 아이템 카드 빌더
   Widget _buildMedicationCard({
     required int index,
@@ -172,4 +180,104 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
       ),
     );
   }
+}
+
+class _AddMedicationDialog extends StatefulWidget {
+  const _AddMedicationDialog();
+
+  @override
+  State<_AddMedicationDialog> createState() => _AddMedicationDialogState();
+}
+
+class _AddMedicationDialogState extends State<_AddMedicationDialog> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+
+  bool get _canAdd =>
+      _nameController.text.trim().isNotEmpty &&
+      _timeController.text.trim().isNotEmpty;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _timeController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
+
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.only(bottom: keyboardHeight),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 360,
+              maxHeight: 420,
+            ),
+            child: Material(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('약 추가하기', style: OngiTextStyle.button18),
+                    const SizedBox(height: 20),
+                    BasicTextField(
+                      label: '약 이름',
+                      hintText: '약 이름을 입력해주세요.',
+                      controller: _nameController,
+                      keyboardType: TextInputType.text,
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 16),
+                    BasicTextField(
+                      label: '복용 시간',
+                      hintText: '예: 09:00',
+                      controller: _timeController,
+                      keyboardType: TextInputType.datetime,
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 24),
+                    BasicButton(
+                      text: '추가하기',
+                      isClickable: _canAdd,
+                      onPressed: _canAdd
+                          ? () {
+                              Navigator.of(context).pop(
+                                _MedicationInput(
+                                  name: _nameController.text.trim(),
+                                  time: _timeController.text.trim(),
+                                ),
+                              );
+                            }
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MedicationInput {
+  const _MedicationInput({
+    required this.name,
+    required this.time,
+  });
+
+  final String name;
+  final String time;
 }
