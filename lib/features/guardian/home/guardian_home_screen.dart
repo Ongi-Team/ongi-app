@@ -11,7 +11,7 @@ class GuardianHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => GuardianHomeViewModel(),
+      create: (_) => GuardianHomeViewModel()..loadMedications(),
       child: const _GuardianHomeView(),
     );
   }
@@ -75,12 +75,7 @@ class _GuardianHomeView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey.shade200, width: 1.5),
                 ),
-                child: Column(
-                  children: _buildSeparatedMedicationTiles(
-                    vm.medications,
-                    primaryColor,
-                  ),
-                ),
+                child: _buildMedicationSectionContent(vm, primaryColor),
               ),
               const SizedBox(height: 32),
 
@@ -114,6 +109,55 @@ class _GuardianHomeView extends StatelessWidget {
   }
 
   // --- 위젯을 간결하게 유지하기 위한 컴포넌트 팩토리 메서드들 ---
+
+  Widget _buildMedicationSectionContent(
+    GuardianHomeViewModel vm,
+    Color primaryColor,
+  ) {
+    if (vm.isMedicationLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(
+          child: Text('복약 기록을 불러오는 중이에요', style: OngiTextStyle.body15),
+        ),
+      );
+    }
+
+    if (vm.medicationErrorMessage != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        child: Center(
+          child: Text(
+            vm.medicationErrorMessage!,
+            style: OngiTextStyle.body15.copyWith(
+              color: OngiColor.systemGray03,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (vm.medications.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Center(
+          child: Text(
+            '오늘 등록된 복약 기록이 없어요',
+            style: OngiTextStyle.body15.copyWith(
+              color: OngiColor.systemGray03,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: _buildSeparatedMedicationTiles(
+        vm.medications,
+        primaryColor,
+      ),
+    );
+  }
 
   List<Widget> _buildSeparatedMedicationTiles(
     List<MedicationItem> items,
