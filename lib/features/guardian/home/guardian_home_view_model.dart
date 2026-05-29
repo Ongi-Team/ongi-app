@@ -13,10 +13,11 @@ class GuardianHomeViewModel extends ChangeNotifier {
 
   bool _isMedicationLoading = false;
   String? _medicationErrorMessage;
+  String _elderName = '어르신';
 
   String get todayText => _formatDate(_today);
   String get queryDate => _formatQueryDate(_today);
-  String get memberName => '홍길동';
+  String get memberName => _elderName;
   String get greeting => '오늘도 따뜻한 하루 보내세요';
   bool get isMedicationLoading => _isMedicationLoading;
   String? get medicationErrorMessage => _medicationErrorMessage;
@@ -34,6 +35,11 @@ class GuardianHomeViewModel extends ChangeNotifier {
 
     try {
       final elderId = await _storage.getElderId();
+      final elderName = await _storage.readElderName();
+      if (elderName != null && elderName.isNotEmpty) {
+        _elderName = elderName;
+      }
+
       if (elderId == null) {
         _medications.clear();
         _medicationErrorMessage = '어르신 정보를 찾을 수 없습니다.';

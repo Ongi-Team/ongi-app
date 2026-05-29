@@ -50,6 +50,7 @@ class AuthService {
       final elder = result.elder;
       if (elder != null) {
         await _secureStorage.saveElderId(elder.elderId);
+        await _secureStorage.saveElderName(elder.name);
       }
       if (member != null) {
         await _secureStorage.saveUserId(member.memberId);
