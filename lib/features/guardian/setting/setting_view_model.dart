@@ -40,6 +40,27 @@ class SettingViewModel extends ChangeNotifier {
   }
 
   // 회원탈퇴 다이얼로그 예시
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그아웃'),
+        content: const Text('정말로 로그아웃 하시겠습니까?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text('취소')),
+          TextButton(
+            onPressed: () {
+              debugPrint('로그아웃');
+              Navigator.pop(context);
+            },
+            child: const Text('로그아웃', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showWithdrawalDialog(BuildContext context) {
     showDialog(
       context: context,
