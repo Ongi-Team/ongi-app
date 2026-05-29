@@ -13,7 +13,7 @@ import 'package:ongi_app/features/elder/home/elder_home_screen.dart';
 import 'package:ongi_app/features/guardian/guardian_shell.dart';
 import 'package:ongi_app/features/guardian/home/guardian_home_screen.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_screen.dart';
-import 'package:ongi_app/features/guardian/setting/setting_screen.dart';
+import 'package:ongi_app/features/guardian/setting/guardian_setting_screen.dart';
 import 'routes.dart';
 
 final appRouter = GoRouter(

@@ -8,7 +8,7 @@ class SettingMenuItem {
   SettingMenuItem({required this.title, required this.onTap});
 }
 
-class SettingViewModel extends ChangeNotifier {
+class ElderSettingViewModel extends ChangeNotifier {
   // 메뉴 리스트 정의
   List<SettingMenuItem> getMenuItems(BuildContext context) {
     return [
@@ -25,16 +25,8 @@ class SettingViewModel extends ChangeNotifier {
         onTap: () => debugPrint('사용방법 이동'),
       ),
       SettingMenuItem(
-        title: '디바이스 연결',
-        onTap: () => debugPrint('디바이스 연결 이동'),
-      ),
-      SettingMenuItem(
         title: '로그아웃',
         onTap: () => _showLogoutDialog(context),
-      ),
-      SettingMenuItem(
-        title: '회원탈퇴',
-        onTap: () => _showWithdrawalDialog(context),
       ),
     ];
   }
@@ -55,27 +47,6 @@ class SettingViewModel extends ChangeNotifier {
               Navigator.pop(context);
             },
             child: const Text('로그아웃', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showWithdrawalDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('회원탈퇴'),
-        content: const Text('정말로 탈퇴하시겠습니까? 모든 정보가 삭제됩니다.'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context), child: const Text('취소')),
-          TextButton(
-            onPressed: () {
-              debugPrint('탈퇴 처리 진행');
-              Navigator.pop(context);
-            },
-            child: const Text('탈퇴', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
