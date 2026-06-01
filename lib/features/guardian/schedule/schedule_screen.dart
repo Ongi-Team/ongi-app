@@ -223,6 +223,13 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
   }
 
   Future<void> _showAddMedicationDialog() async {
+    if (_viewModel.medications.length >= 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('최대 6개만 등록 가능해요')),
+      );
+      return;
+    }
+
     final medication = await showDialog<_MedicationInput>(
       context: context,
       builder: (_) => const _AddMedicationDialog(),
