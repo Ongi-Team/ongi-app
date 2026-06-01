@@ -6,11 +6,13 @@ import 'package:ongi_app/data/services/medicine_service.dart';
 // 약 데이터 모델
 class MedicationModel {
   final String id;
+  final int? medicineId;
   final String name;
   final String time;
 
   MedicationModel({
     required this.id,
+    this.medicineId,
     required this.name,
     required this.time,
   });
@@ -64,6 +66,7 @@ class ScheduleViewModel extends ChangeNotifier {
             final schedule = entry.value;
             return MedicationModel(
               id: (schedule.medicineId ?? index).toString(),
+              medicineId: schedule.medicineId,
               name: schedule.medicineName,
               time: _formatScheduledTime(schedule.scheduledTime),
             );
@@ -86,8 +89,16 @@ class ScheduleViewModel extends ChangeNotifier {
   }
 
   // 약 삭제 기능 (삭제 텍스트 버튼 클릭 시)
-  void removeMedication(String id) {
-    _medications.removeWhere((med) => med.id == id);
+  Future<void> removeMedication(MedicationModel medication) async {
+    final medicineId = medication.medicineId ?? int.tryParse(medication.id);
+    if (medicineId == null) {
+      _medications.removeWhere((med) => med.id == medication.id);
+      notifyListeners();
+      return;
+    }
+
+    await _medicineService.deleteMedicineSchedule(medicineId: medicineId);
+    _medications.removeWhere((med) => med.id == medication.id);
     notifyListeners(); // UI 업데이트 알림
   }
 

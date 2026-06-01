@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/constants/styles.dart';
+import 'package:ongi_app/data/network/api_exception.dart';
 import 'package:ongi_app/features/guardian/nav/guardian_tab_refresh_notifier.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_view_model.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
@@ -201,7 +202,24 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
     );
 
     if (shouldDelete != true) return;
-    _viewModel.removeMedication(medication.id);
+
+    try {
+      await _viewModel.removeMedication(medication);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정이 삭제되었습니다.')),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정을 삭제하지 못했습니다.')),
+      );
+    }
   }
 
   Future<void> _showAddMedicationDialog() async {

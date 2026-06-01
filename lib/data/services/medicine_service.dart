@@ -49,4 +49,15 @@ class MedicineService {
       );
     }
   }
+
+  Future<void> deleteMedicineSchedule({required int medicineId}) async {
+    try {
+      await _dio.delete('${Apis.getMedicineSchedules}/$medicineId');
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '복약 일정을 삭제하지 못했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
 }
