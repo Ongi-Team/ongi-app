@@ -32,7 +32,7 @@ class GuardianSettingViewModel extends ChangeNotifier {
       ),
       SettingMenuItem(
         title: '디바이스 연결',
-        onTap: () => debugPrint('디바이스 연결 이동'),
+        onTap: () => context.push(AppRoutes.guardianDeviceQrScan),
       ),
       SettingMenuItem(
         title: '로그아웃',

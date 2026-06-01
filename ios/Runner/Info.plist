@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSUserNotificationUsageDescription</key>
 	<string>온기 서비스의 중요한 알림을 받기 위해 알림 권한이 필요합니다.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>디바이스 QR 코드를 스캔하기 위해 카메라 권한이 필요합니다.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

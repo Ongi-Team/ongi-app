@@ -16,6 +16,7 @@ import 'package:ongi_app/features/elder/setting/elder_setting_screen.dart';
 import 'package:ongi_app/features/guardian/guardian_shell.dart';
 import 'package:ongi_app/features/guardian/home/guardian_home_screen.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_screen.dart';
+import 'package:ongi_app/features/guardian/setting/device/device_connect_screen.dart';
 import 'package:ongi_app/features/guardian/setting/guardian_setting_screen.dart';
 import 'routes.dart';
 
@@ -60,6 +61,20 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.roleSelect,
       builder: (context, state) => const RoleSelectScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.guardianDeviceQrScan,
+      builder: (context, state) => const DeviceQrScanScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.guardianDeviceWifi,
+      builder: (context, state) => DeviceWifiInputScreen(
+        deviceCode: state.uri.queryParameters['deviceCode'],
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.guardianDeviceSuccess,
+      builder: (context, state) => const DeviceConnectSuccessScreen(),
     ),
 
     // 회원가입 플로우 - SignupViewModel을 두 화면이 공유
