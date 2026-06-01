@@ -236,7 +236,24 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
     );
 
     if (medication == null) return;
-    _viewModel.addMedication(medication.name, medication.time);
+
+    try {
+      await _viewModel.addMedication(medication.name, medication.time);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정이 추가되었습니다.')),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정을 추가하지 못했습니다.')),
+      );
+    }
   }
 
   // 약 리스트의 단일 아이템 카드 빌더

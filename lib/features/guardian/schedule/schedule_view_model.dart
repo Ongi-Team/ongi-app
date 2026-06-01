@@ -82,10 +82,22 @@ class ScheduleViewModel extends ChangeNotifier {
   }
 
   // 약 추가 기능 (추가하기 버튼 클릭 시)
-  void addMedication(String name, String time) {
-    final newId = (DateTime.now().millisecondsSinceEpoch).toString();
-    _medications.add(MedicationModel(id: newId, name: name, time: time));
-    notifyListeners(); // UI 업데이트 알림
+  Future<void> addMedication(String name, String time) async {
+    final schedules = [
+      ..._medications.map(
+        (medication) => {
+          'name': medication.name,
+          'scheduledTime': _formatRequestTime(medication.time),
+        },
+      ),
+      {
+        'name': name,
+        'scheduledTime': _formatRequestTime(time),
+      },
+    ];
+
+    await _medicineService.saveMedicineSchedules(schedules: schedules);
+    await loadMedications();
   }
 
   // 약 삭제 기능 (삭제 텍스트 버튼 클릭 시)
@@ -122,5 +134,16 @@ class ScheduleViewModel extends ChangeNotifier {
     final parts = scheduledTime.split(':');
     if (parts.length < 2) return scheduledTime;
     return '${parts[0]}:${parts[1]}';
+  }
+
+  String _formatRequestTime(String time) {
+    final parts = time.split(':');
+    if (parts.length >= 3) {
+      return '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}:${parts[2].padLeft(2, '0')}';
+    }
+    if (parts.length == 2) {
+      return '${parts[0].padLeft(2, '0')}:${parts[1].padLeft(2, '0')}:00';
+    }
+    return time;
   }
 }
