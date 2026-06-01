@@ -149,10 +149,59 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
         return _buildMedicationCard(
           index: index + 1,
           medication: medication,
-          onDelete: () => _viewModel.removeMedication(medication.id),
+          onDelete: () => _showDeleteMedicationDialog(medication),
         );
       },
     );
+  }
+
+  Future<void> _showDeleteMedicationDialog(MedicationModel medication) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('약 삭제', style: OngiTextStyle.button18),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                medication.name,
+                style: OngiTextStyle.button18,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '복용 시간 ${medication.time}',
+                style: OngiTextStyle.body15.copyWith(
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '진짜로 삭제하겠습니까?',
+                style: OngiTextStyle.body15,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text(
+                '삭제',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete != true) return;
+    _viewModel.removeMedication(medication.id);
   }
 
   Future<void> _showAddMedicationDialog() async {
