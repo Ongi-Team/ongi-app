@@ -29,6 +29,7 @@ class ScheduleViewModel extends ChangeNotifier {
 
   final List<MedicationModel> _medications = [];
   bool _isMedicationLoading = false;
+  bool _isPillBoxOpen = false;
   String? _medicationErrorMessage;
 
   String get todayText => _formatDate(_today);
@@ -37,6 +38,8 @@ class ScheduleViewModel extends ChangeNotifier {
   bool get isMedicationLoading => _isMedicationLoading;
   String? get medicationErrorMessage => _medicationErrorMessage;
   List<MedicationModel> get medications => List.unmodifiable(_medications);
+  String get pillBoxButtonText => _isPillBoxOpen ? '약통 닫기' : '약통 열기';
+  bool get isPillBoxOpen => _isPillBoxOpen;
 
   Future<void> loadInitialData() async {
     await Future.wait([
@@ -117,8 +120,18 @@ class ScheduleViewModel extends ChangeNotifier {
   }
 
   // 약통 열기 버튼 기능
-  Future<void> openPillBox() async {
-    await _deviceService.openAllSlots();
+  Future<bool> togglePillBox() async {
+    final willOpen = !_isPillBoxOpen;
+
+    if (willOpen) {
+      await _deviceService.openAllSlots();
+    } else {
+      await _deviceService.closeAllSlots();
+    }
+
+    _isPillBoxOpen = willOpen;
+    notifyListeners();
+    return _isPillBoxOpen;
   }
 
   String _formatDate(DateTime date) {

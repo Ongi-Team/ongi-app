@@ -17,4 +17,15 @@ class DeviceService {
       );
     }
   }
+
+  Future<void> closeAllSlots() async {
+    try {
+      await _dio.post(Apis.closeAllDeviceSlots);
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '약통 닫기 명령을 전달하지 못했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
 }

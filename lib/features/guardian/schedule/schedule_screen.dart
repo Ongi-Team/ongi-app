@@ -97,9 +97,9 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
                     child: BasicButton(
-                      text: '약통 열기',
+                      text: _viewModel.pillBoxButtonText,
                       isClickable: true,
-                      onPressed: _openPillBox,
+                      onPressed: _togglePillBox,
                     ),
                   ),
                 ],
@@ -156,12 +156,12 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
     );
   }
 
-  Future<void> _openPillBox() async {
+  Future<void> _togglePillBox() async {
     try {
-      await _viewModel.openPillBox();
+      final isOpen = await _viewModel.togglePillBox();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('약통 열기 명령을 전달했습니다.')),
+        SnackBar(content: Text(isOpen ? '약통이 열렸습니다' : '약통이 닫혔습니다')),
       );
     } on ApiException catch (e) {
       if (!mounted) return;
@@ -171,7 +171,7 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('약통 열기 명령을 전달하지 못했습니다.')),
+        const SnackBar(content: Text('약통 명령을 전달하지 못했습니다.')),
       );
     }
   }

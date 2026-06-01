@@ -19,6 +19,7 @@ abstract class Apis {
 
   /// 디바이스 관련 api
   static const String openAllDeviceSlots = "api/device/open-all";
+  static const String closeAllDeviceSlots = "api/device/close-all";
 
   /// 로그인 관련 api
   static const String postLogin = "api/auth/login";
