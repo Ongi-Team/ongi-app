@@ -49,4 +49,33 @@ class MedicineService {
       );
     }
   }
+
+  Future<void> saveMedicineSchedules({
+    required List<Map<String, String>> schedules,
+  }) async {
+    try {
+      await _dio.post(
+        Apis.getMedicineSchedules,
+        data: {
+          'schedules': schedules,
+        },
+      );
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '복약 일정을 저장하지 못했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
+
+  Future<void> deleteMedicineSchedule({required int medicineId}) async {
+    try {
+      await _dio.delete('${Apis.getMedicineSchedules}/$medicineId');
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '복약 일정을 삭제하지 못했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
 }

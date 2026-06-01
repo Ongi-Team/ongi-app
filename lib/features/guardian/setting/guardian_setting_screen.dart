@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ongi_app/core/constants/constants.dart';
+import 'package:ongi_app/features/guardian/nav/guardian_tab_refresh_notifier.dart';
 import 'package:ongi_app/features/guardian/setting/guardian_setting_view_model.dart';
 
-class GuardianSettingScreen extends StatelessWidget {
+class GuardianSettingScreen extends StatefulWidget {
   const GuardianSettingScreen({super.key});
+
+  @override
+  State<GuardianSettingScreen> createState() => _GuardianSettingScreenState();
+}
+
+class _GuardianSettingScreenState extends State<GuardianSettingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    GuardianTabRefreshNotifier.settingSignal.addListener(_refreshSetting);
+  }
+
+  @override
+  void dispose() {
+    GuardianTabRefreshNotifier.settingSignal.removeListener(_refreshSetting);
+    super.dispose();
+  }
+
+  void _refreshSetting() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {

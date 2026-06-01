@@ -3,6 +3,7 @@ import 'package:ongi_app/data/network/api_client.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 import 'package:ongi_app/data/services/auth_service.dart';
 import 'package:ongi_app/data/services/auth_session.dart';
+import 'package:ongi_app/data/services/device_service.dart';
 import 'package:ongi_app/data/services/member_service.dart';
 import 'package:ongi_app/data/services/medicine_service.dart';
 
@@ -30,5 +31,8 @@ void setupServiceLocator() {
   );
   getIt.registerLazySingleton<MedicineService>(
     () => MedicineService(getIt<ApiClient>().dio),
+  );
+  getIt.registerLazySingleton<DeviceService>(
+    () => DeviceService(getIt<ApiClient>().dio),
   );
 }

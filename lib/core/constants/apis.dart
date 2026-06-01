@@ -17,6 +17,10 @@ abstract class Apis {
   static const String getMedications = "api/medicine/medications";
   static const String getMedicineSchedules = "api/medicine/schedules";
 
+  /// 디바이스 관련 api
+  static const String openAllDeviceSlots = "api/device/open-all";
+  static const String closeAllDeviceSlots = "api/device/close-all";
+
   /// 로그인 관련 api
   static const String postLogin = "api/auth/login";
   static const String postLoginMode = "api/auth/login/mode";

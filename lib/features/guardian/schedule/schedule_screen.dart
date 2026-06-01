@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/constants/styles.dart';
+import 'package:ongi_app/data/network/api_exception.dart';
+import 'package:ongi_app/features/guardian/nav/guardian_tab_refresh_notifier.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_view_model.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
@@ -19,13 +21,19 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel.loadHeaderData();
+    _viewModel.loadInitialData();
+    GuardianTabRefreshNotifier.scheduleSignal.addListener(_refreshSchedule);
   }
 
   @override
   void dispose() {
+    GuardianTabRefreshNotifier.scheduleSignal.removeListener(_refreshSchedule);
     _viewModel.dispose();
     super.dispose();
+  }
+
+  void _refreshSchedule() {
+    _viewModel.loadInitialData();
   }
 
   @override
@@ -82,31 +90,16 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
 
                   // 3. 약 목록 리스트 영역
                   Expanded(
-                    child: _viewModel.medications.isEmpty
-                        ? const Center(child: Text('등록된 약 일정이 없습니다.'))
-                        : ListView.separated(
-                            itemCount: _viewModel.medications.length,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 12),
-                            itemBuilder: (context, index) {
-                              final medication = _viewModel.medications[index];
-                              return _buildMedicationCard(
-                                index: index + 1,
-                                medication: medication,
-                                onDelete: () =>
-                                    _viewModel.removeMedication(medication.id),
-                              );
-                            },
-                          ),
+                    child: _buildMedicationListContent(primaryColor),
                   ),
 
                   // 4. 하단 '약통 열기' 버튼
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
                     child: BasicButton(
-                      text: '약통 열기',
+                      text: _viewModel.pillBoxButtonText,
                       isClickable: true,
-                      onPressed: () => _viewModel.openPillBox(),
+                      onPressed: _togglePillBox,
                     ),
                   ),
                 ],
@@ -118,14 +111,169 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
     );
   }
 
+  Widget _buildMedicationListContent(Color primaryColor) {
+    if (_viewModel.isMedicationLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_viewModel.medicationErrorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _viewModel.medicationErrorMessage!,
+              style: OngiTextStyle.body15,
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: _viewModel.loadMedications,
+              child: Text(
+                '다시 불러오기',
+                style: OngiTextStyle.body15.copyWith(color: primaryColor),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_viewModel.medications.isEmpty) {
+      return const Center(child: Text('등록된 약 일정이 없습니다.'));
+    }
+
+    return ListView.separated(
+      itemCount: _viewModel.medications.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final medication = _viewModel.medications[index];
+        return _buildMedicationCard(
+          index: index + 1,
+          medication: medication,
+          onDelete: () => _showDeleteMedicationDialog(medication),
+        );
+      },
+    );
+  }
+
+  Future<void> _togglePillBox() async {
+    try {
+      final isOpen = await _viewModel.togglePillBox();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(isOpen ? '약통이 열렸습니다' : '약통이 닫혔습니다')),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('약통 명령을 전달하지 못했습니다.')),
+      );
+    }
+  }
+
+  Future<void> _showDeleteMedicationDialog(MedicationModel medication) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('약 삭제', style: OngiTextStyle.button18),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                medication.name,
+                style: OngiTextStyle.button18,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '복용 시간 ${medication.time}',
+                style: OngiTextStyle.body15.copyWith(
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '진짜로 삭제하겠습니까?',
+                style: OngiTextStyle.body15,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text(
+                '삭제',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete != true) return;
+
+    try {
+      await _viewModel.removeMedication(medication);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정이 삭제되었습니다.')),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정을 삭제하지 못했습니다.')),
+      );
+    }
+  }
+
   Future<void> _showAddMedicationDialog() async {
+    if (_viewModel.medications.length >= 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('최대 6개만 등록 가능해요')),
+      );
+      return;
+    }
+
     final medication = await showDialog<_MedicationInput>(
       context: context,
       builder: (_) => const _AddMedicationDialog(),
     );
 
     if (medication == null) return;
-    _viewModel.addMedication(medication.name, medication.time);
+
+    try {
+      await _viewModel.addMedication(medication.name, medication.time);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정이 추가되었습니다.')),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('복약 일정을 추가하지 못했습니다.')),
+      );
+    }
   }
 
   // 약 리스트의 단일 아이템 카드 빌더
