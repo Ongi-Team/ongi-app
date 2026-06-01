@@ -12,6 +12,9 @@ abstract class AppRoutes {
   static const guardianHome = '/guardian/home';
   static const guardianSchedule = '/guardian/schedule';
   static const guardianSettings = '/guardian/settings';
+  static const guardianDeviceQrScan = '/guardian/device/qr-scan';
+  static const guardianDeviceWifi = '/guardian/device/wifi';
+  static const guardianDeviceSuccess = '/guardian/device/success';
 
   // 어르신
   static const elderHome = '/elder/home';
