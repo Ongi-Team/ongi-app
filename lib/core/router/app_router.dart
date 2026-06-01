@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:ongi_app/core/di/service_locator.dart';
+import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 import 'package:ongi_app/features/auth/login/login_screen.dart';
 import 'package:ongi_app/features/auth/role_select/role_select_screen.dart';
 import 'package:ongi_app/features/auth/signup/account_info_screen.dart';
@@ -18,6 +20,36 @@ import 'routes.dart';
 
 final appRouter = GoRouter(
   initialLocation: AppRoutes.login,
+  redirect: (context, state) async {
+    final storage = getIt<SecureStorageRepository>();
+    final accessToken = await storage.readAccessToken();
+    final refreshToken = await storage.readRefreshToken();
+    final role = await storage.readRole();
+    final location = state.uri.path;
+    final homeRoute = _homeRouteForRole(role);
+
+    final isLoggedIn = accessToken != null &&
+        accessToken.isNotEmpty &&
+        refreshToken != null &&
+        refreshToken.isNotEmpty &&
+        role != null &&
+        role.isNotEmpty &&
+        homeRoute != null;
+
+    final isAuthRoute = _authRoutes.contains(location);
+    final isSignupRoute = _signupRoutes.contains(location);
+
+    if (!isLoggedIn) {
+      if (isAuthRoute || isSignupRoute) return null;
+      return AppRoutes.login;
+    }
+
+    if (isAuthRoute || isSignupRoute) {
+      return homeRoute;
+    }
+
+    return null;
+  },
   routes: [
     GoRoute(
       path: AppRoutes.login,
@@ -101,3 +133,26 @@ final appRouter = GoRouter(
     ),
   ],
 );
+
+const Set<String> _authRoutes = {
+  AppRoutes.login,
+  AppRoutes.roleSelect,
+};
+
+const Set<String> _signupRoutes = {
+  AppRoutes.signup,
+  AppRoutes.signupAccountInfo,
+  AppRoutes.signupElderlyInfo,
+  AppRoutes.signupComplete,
+};
+
+String? _homeRouteForRole(String? role) {
+  switch (role) {
+    case 'GUARDIAN':
+      return AppRoutes.guardianHome;
+    case 'ELDER':
+      return AppRoutes.elderHome;
+    default:
+      return null;
+  }
+}
