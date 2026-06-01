@@ -99,7 +99,7 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
                     child: BasicButton(
                       text: '약통 열기',
                       isClickable: true,
-                      onPressed: () => _viewModel.openPillBox(),
+                      onPressed: _openPillBox,
                     ),
                   ),
                 ],
@@ -154,6 +154,26 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
         );
       },
     );
+  }
+
+  Future<void> _openPillBox() async {
+    try {
+      await _viewModel.openPillBox();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('약통 열기 명령을 전달했습니다.')),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('약통 열기 명령을 전달하지 못했습니다.')),
+      );
+    }
   }
 
   Future<void> _showDeleteMedicationDialog(MedicationModel medication) async {

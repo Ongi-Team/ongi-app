@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/di/service_locator.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
+import 'package:ongi_app/data/services/device_service.dart';
 import 'package:ongi_app/data/services/medicine_service.dart';
 
 // 약 데이터 모델
@@ -21,6 +22,7 @@ class MedicationModel {
 // 일정 화면 뷰모델
 class ScheduleViewModel extends ChangeNotifier {
   final _medicineService = getIt<MedicineService>();
+  final _deviceService = getIt<DeviceService>();
   final _storage = getIt<SecureStorageRepository>();
   final DateTime _today = DateTime.now();
   String _elderName = '어르신';
@@ -115,9 +117,8 @@ class ScheduleViewModel extends ChangeNotifier {
   }
 
   // 약통 열기 버튼 기능
-  void openPillBox() {
-    // TODO: 하드웨어 디바이스 연동 또는 API 호출 로직
-    debugPrint('약통 열기 명령 전송');
+  Future<void> openPillBox() async {
+    await _deviceService.openAllSlots();
   }
 
   String _formatDate(DateTime date) {
