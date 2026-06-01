@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/di/service_locator.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
+import 'package:ongi_app/data/services/medicine_service.dart';
 
 // 약 데이터 모델
 class MedicationModel {
@@ -17,24 +18,62 @@ class MedicationModel {
 
 // 일정 화면 뷰모델
 class ScheduleViewModel extends ChangeNotifier {
+  final _medicineService = getIt<MedicineService>();
   final _storage = getIt<SecureStorageRepository>();
   final DateTime _today = DateTime.now();
   String _elderName = '어르신';
 
-  // 샘플 데이터 (이미지 기준: 1. 혈압약 09:00)
-  final List<MedicationModel> _medications = [
-    MedicationModel(id: '1', name: '혈압약', time: '09:00'),
-  ];
+  final List<MedicationModel> _medications = [];
+  bool _isMedicationLoading = false;
+  String? _medicationErrorMessage;
 
   String get todayText => _formatDate(_today);
   String get memberName => _elderName;
   String get greeting => '오늘도 따뜻한 하루 보내세요';
-  List<MedicationModel> get medications => _medications;
+  bool get isMedicationLoading => _isMedicationLoading;
+  String? get medicationErrorMessage => _medicationErrorMessage;
+  List<MedicationModel> get medications => List.unmodifiable(_medications);
+
+  Future<void> loadInitialData() async {
+    await Future.wait([
+      loadHeaderData(),
+      loadMedications(),
+    ]);
+  }
 
   Future<void> loadHeaderData() async {
     final elderName = await _storage.readElderName();
     if (elderName != null && elderName.isNotEmpty) {
       _elderName = elderName;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadMedications() async {
+    _isMedicationLoading = true;
+    _medicationErrorMessage = null;
+    notifyListeners();
+
+    try {
+      final schedules = await _medicineService.getMedicineSchedules();
+      _medications
+        ..clear()
+        ..addAll(
+          schedules.asMap().entries.map((entry) {
+            final index = entry.key;
+            final schedule = entry.value;
+            return MedicationModel(
+              id: (schedule.medicineId ?? index).toString(),
+              name: schedule.medicineName,
+              time: _formatScheduledTime(schedule.scheduledTime),
+            );
+          }),
+        );
+    } catch (e) {
+      _medications.clear();
+      _medicationErrorMessage = '약 일정을 불러오지 못했습니다.';
+    } finally {
+      _isMedicationLoading = false;
       notifyListeners();
     }
   }
@@ -66,5 +105,11 @@ class ScheduleViewModel extends ChangeNotifier {
     final weekday = weekdays[date.weekday - 1];
 
     return '$year. $month. $day($weekday)';
+  }
+
+  String _formatScheduledTime(String scheduledTime) {
+    final parts = scheduledTime.split(':');
+    if (parts.length < 2) return scheduledTime;
+    return '${parts[0]}:${parts[1]}';
   }
 }

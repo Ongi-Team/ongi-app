@@ -19,7 +19,7 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel.loadHeaderData();
+    _viewModel.loadInitialData();
   }
 
   @override
@@ -82,22 +82,7 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
 
                   // 3. 약 목록 리스트 영역
                   Expanded(
-                    child: _viewModel.medications.isEmpty
-                        ? const Center(child: Text('등록된 약 일정이 없습니다.'))
-                        : ListView.separated(
-                            itemCount: _viewModel.medications.length,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 12),
-                            itemBuilder: (context, index) {
-                              final medication = _viewModel.medications[index];
-                              return _buildMedicationCard(
-                                index: index + 1,
-                                medication: medication,
-                                onDelete: () =>
-                                    _viewModel.removeMedication(medication.id),
-                              );
-                            },
-                          ),
+                    child: _buildMedicationListContent(primaryColor),
                   ),
 
                   // 4. 하단 '약통 열기' 버튼
@@ -115,6 +100,51 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildMedicationListContent(Color primaryColor) {
+    if (_viewModel.isMedicationLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_viewModel.medicationErrorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _viewModel.medicationErrorMessage!,
+              style: OngiTextStyle.body15,
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: _viewModel.loadMedications,
+              child: Text(
+                '다시 불러오기',
+                style: OngiTextStyle.body15.copyWith(color: primaryColor),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_viewModel.medications.isEmpty) {
+      return const Center(child: Text('등록된 약 일정이 없습니다.'));
+    }
+
+    return ListView.separated(
+      itemCount: _viewModel.medications.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final medication = _viewModel.medications[index];
+        return _buildMedicationCard(
+          index: index + 1,
+          medication: medication,
+          onDelete: () => _viewModel.removeMedication(medication.id),
+        );
+      },
     );
   }
 
