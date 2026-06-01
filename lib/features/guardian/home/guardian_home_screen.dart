@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/constants/constants.dart';
+import 'package:ongi_app/features/guardian/nav/guardian_tab_refresh_notifier.dart';
 import 'package:ongi_app/shared/widgets/custom_header.dart';
 import 'package:provider/provider.dart';
 
@@ -17,8 +18,29 @@ class GuardianHomeScreen extends StatelessWidget {
   }
 }
 
-class _GuardianHomeView extends StatelessWidget {
+class _GuardianHomeView extends StatefulWidget {
   const _GuardianHomeView();
+
+  @override
+  State<_GuardianHomeView> createState() => _GuardianHomeViewState();
+}
+
+class _GuardianHomeViewState extends State<_GuardianHomeView> {
+  @override
+  void initState() {
+    super.initState();
+    GuardianTabRefreshNotifier.homeSignal.addListener(_refreshHome);
+  }
+
+  @override
+  void dispose() {
+    GuardianTabRefreshNotifier.homeSignal.removeListener(_refreshHome);
+    super.dispose();
+  }
+
+  void _refreshHome() {
+    context.read<GuardianHomeViewModel>().loadMedications();
+  }
 
   @override
   Widget build(BuildContext context) {

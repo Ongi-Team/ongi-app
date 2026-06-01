@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ongi_app/core/constants/styles.dart';
+import 'package:ongi_app/features/guardian/nav/guardian_tab_refresh_notifier.dart';
 import 'package:ongi_app/features/guardian/schedule/schedule_view_model.dart';
 import 'package:ongi_app/shared/widgets/basic_button.dart';
 import 'package:ongi_app/shared/widgets/basic_text_field.dart';
@@ -20,12 +21,18 @@ class _GuardianScheduleScreenState extends State<GuardianScheduleScreen> {
   void initState() {
     super.initState();
     _viewModel.loadInitialData();
+    GuardianTabRefreshNotifier.scheduleSignal.addListener(_refreshSchedule);
   }
 
   @override
   void dispose() {
+    GuardianTabRefreshNotifier.scheduleSignal.removeListener(_refreshSchedule);
     _viewModel.dispose();
     super.dispose();
+  }
+
+  void _refreshSchedule() {
+    _viewModel.loadInitialData();
   }
 
   @override
