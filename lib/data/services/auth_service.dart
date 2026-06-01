@@ -71,21 +71,45 @@ class AuthService {
 
   Future<void> reissueToken() async {
     final refreshToken = await _secureStorage.readRefreshToken();
-    if (refreshToken == null) throw Exception('리프레시 토큰이 없습니다.');
+    final loginMode = await _secureStorage.readRole();
+    if (refreshToken == null || refreshToken.isEmpty) {
+      await _secureStorage.deleteAuthData();
+      throw Exception('리프레시 토큰이 없습니다.');
+    }
+    if (loginMode == null || loginMode.isEmpty) {
+      await _secureStorage.deleteAuthData();
+      throw Exception('로그인 모드가 없습니다.');
+    }
 
-    final response = await _dio.post(
-      'reissue', // TODO: 실제 엔드포인트로 변경
-      data: {'refreshToken': refreshToken},
-      options: Options(extra: {'skipAuthToken': true}),
-    );
+    try {
+      final response = await _dio.post(
+        Apis.reissueToken,
+        data: {
+          'refreshToken': refreshToken,
+          'loginMode': loginMode,
+        },
+        options: Options(extra: {'skipAuthToken': true}),
+      );
 
-    final newAccessToken = response.data['accessToken'] as String?;
-    final newRefreshToken = response.data['refreshToken'] as String?;
+      final data = response.data['data'] as Map<String, dynamic>;
+      final newAccessToken = data['accessToken'] as String?;
+      final newRefreshToken = data['refreshToken'] as String?;
 
-    if (newAccessToken == null) throw Exception('새 액세스 토큰이 없습니다.');
-    await _secureStorage.saveAccessToken(newAccessToken);
-    if (newRefreshToken != null) {
+      if (newAccessToken == null || newRefreshToken == null) {
+        throw Exception('재발급된 토큰이 없습니다.');
+      }
+
+      await _secureStorage.saveAccessToken(newAccessToken);
       await _secureStorage.saveRefreshToken(newRefreshToken);
+    } on DioException catch (e) {
+      await _secureStorage.deleteAuthData();
+      throw ApiException(
+        e.response?.data?['message'] ?? '토큰 재발급에 실패했습니다.',
+        e.response?.statusCode,
+      );
+    } catch (e) {
+      await _secureStorage.deleteAuthData();
+      rethrow;
     }
   }
 

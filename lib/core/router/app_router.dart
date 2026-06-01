@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ongi_app/core/di/service_locator.dart';
+import 'package:ongi_app/core/router/auth_redirect_notifier.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 import 'package:ongi_app/features/auth/login/login_screen.dart';
 import 'package:ongi_app/features/auth/role_select/role_select_screen.dart';
@@ -20,6 +21,7 @@ import 'routes.dart';
 
 final appRouter = GoRouter(
   initialLocation: AppRoutes.login,
+  refreshListenable: AuthRedirectNotifier.signal,
   redirect: (context, state) async {
     final storage = getIt<SecureStorageRepository>();
     final accessToken = await storage.readAccessToken();

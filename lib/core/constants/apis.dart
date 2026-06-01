@@ -8,7 +8,7 @@ abstract class Apis {
 
   /// 토큰 관련 api
   static const String postSignup = "api/auth/signup";
-  static const String reissueToken = "auth/reissue";
+  static const String reissueToken = "api/auth/reissue";
 
   /// 멤버 관련 api
   static const String fcmToken = "api/members/fcm-token";

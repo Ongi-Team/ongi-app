@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
+import 'package:ongi_app/core/router/auth_redirect_notifier.dart';
 import 'package:ongi_app/data/repositories/secure_storage_repository.dart';
 import 'package:ongi_app/data/services/auth_service.dart';
 
@@ -47,14 +48,12 @@ class ApiClient {
         }
       },
       onResponse: (response, handler) {
-        log(
-            '[Interceptor] 응답 ${response.statusCode} — ${response.requestOptions.path}');
+        log('[Interceptor] 응답 ${response.statusCode} — ${response.requestOptions.path}');
         return handler.next(response);
       },
       onError: (DioException e, handler) async {
         final requestOptions = e.requestOptions;
-        log(
-            '[Interceptor] 에러 — path=${requestOptions.path}, status=${e.response?.statusCode}');
+        log('[Interceptor] 에러 — path=${requestOptions.path}, status=${e.response?.statusCode}');
 
         if (requestOptions.extra['skipAuthToken'] == true) {
           log('[Interceptor] skipAuthToken=true, 재발급 시도 안 함');
@@ -69,8 +68,7 @@ class ApiClient {
 
         if (e.response?.statusCode == 401) {
           try {
-            log(
-                '[Interceptor] 401 → 토큰 재발급 시도 (path=${requestOptions.path})');
+            log('[Interceptor] 401 → 토큰 재발급 시도 (path=${requestOptions.path})');
 
             final authService = GetIt.instance<AuthService>();
             await authService.reissueToken();
@@ -101,6 +99,7 @@ class ApiClient {
             return handler.resolve(clonedRequest);
           } catch (refreshError) {
             log('[Interceptor] 토큰 재발급 실패: $refreshError');
+            AuthRedirectNotifier.notifyAuthChanged();
             return handler.reject(e);
           }
         }
