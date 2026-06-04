@@ -34,20 +34,12 @@ class GuardianHomeViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final elderId = await _storage.getElderId();
       final elderName = await _storage.readElderName();
       if (elderName != null && elderName.isNotEmpty) {
         _elderName = elderName;
       }
 
-      if (elderId == null) {
-        _medications.clear();
-        _medicationErrorMessage = '어르신 정보를 찾을 수 없습니다.';
-        return;
-      }
-
-      final records = await _medicineService.getMedicationRecords(
-        elderId: elderId,
+      final records = await _medicineService.getDailyMedications(
         date: queryDate,
       );
 
@@ -57,7 +49,7 @@ class GuardianHomeViewModel extends ChangeNotifier {
           (record) => MedicationItem(
             title: record.medicineName,
             time: _formatScheduledTime(record.scheduledTime),
-            isChecked: record.result == 'TAKEN',
+            isChecked: record.taken || record.result == 'TAKEN',
           ),
         ));
     } catch (e) {
