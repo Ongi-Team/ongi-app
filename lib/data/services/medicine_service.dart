@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:ongi_app/core/constants/apis.dart';
+import 'package:ongi_app/data/dto/request/medication_sync_request_dto.dart';
 import 'package:ongi_app/data/dto/response/daily_medication_response_dto.dart';
 import 'package:ongi_app/data/dto/response/medicine_schedule_response_dto.dart';
 import 'package:ongi_app/data/dto/response/medication_record_response_dto.dart';
@@ -53,6 +54,33 @@ class MedicineService {
     } on DioException catch (e) {
       throw ApiException(
         e.response?.data?['message'] ?? '복약 기록을 불러오지 못했습니다.',
+        e.response?.statusCode,
+      );
+    }
+  }
+
+  Future<void> syncMedicationTaken({
+    required int deviceId,
+    required int dispenserSlot,
+  }) async {
+    try {
+      final now = DateTime.now().toUtc().toIso8601String();
+      await _dio.post(
+        Apis.getMedications,
+        data: {
+          'records': [
+            MedicationSyncRequestDto(
+              deviceId: deviceId,
+              dispenserSlot: dispenserSlot,
+              result: 'TAKEN',
+              recordedAt: now,
+            ).toJson(),
+          ],
+        },
+      );
+    } on DioException catch (e) {
+      throw ApiException(
+        e.response?.data?['message'] ?? '복약 기록 저장에 실패했습니다.',
         e.response?.statusCode,
       );
     }

@@ -118,7 +118,8 @@ class _ElderHomeScreenState extends State<ElderHomeScreen> {
                             height: 56,
                             child: ElevatedButton(
                               onPressed: isActive
-                                  ? () => viewModel.confirmMedication()
+                                  ? () async =>
+                                      viewModel.confirmMedication()
                                   : null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: primaryColor,
